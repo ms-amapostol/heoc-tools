@@ -304,6 +304,16 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
 .heat{display:inline-block;min-width:40px;padding:5px 6px;border-radius:6px;font-weight:800;font-variant-numeric:tabular-nums}
 .sources{font-size:13px;color:var(--muted);display:grid;gap:6px}
 .sources a{color:var(--accent)}
+.tip{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:0;background:var(--soft);color:var(--accent);font:800 11px/1 var(--body);cursor:help;position:relative;vertical-align:middle;margin-left:4px;padding:0;text-transform:none;letter-spacing:0}
+.tip:hover,.tip:focus-visible{background:var(--accent);color:var(--btn-ink)}
+.tip::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);width:max-content;max-width:min(270px,78vw);background:var(--ink);color:var(--bg);font:500 13px/1.45 var(--body);text-align:left;padding:9px 11px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .15s;z-index:30;white-space:normal}
+.tip:hover::after,.tip:focus::after{opacity:1}
+.why{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;background:var(--soft);border-radius:14px;padding:14px 16px;margin-bottom:16px;font-size:15px}
+.why .ic{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--btn-ink);display:grid;place-items:center;font:800 14px var(--display)}
+.why p{margin:0}
+.why p + p{margin-top:6px}
+.why b{color:var(--ink)}
+.sample-hint{margin-top:8px !important;font-size:14px;color:var(--accent);font-weight:600}
 </style>
 </head>
 <body>
@@ -385,13 +395,14 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     <button class="btn link" type="button" id="changePath">Change path or organization</button>
   </div>
   <div class="banner" id="banner" hidden>
-    <span><strong>You're viewing a sample</strong> for Riverbend Workforce Alliance, a fictional nonprofit. Courses are made up; job data is real.</span>
+    <span><strong>Welcome to the sample walkthrough.</strong> Everything is pre-filled for Riverbend Workforce Alliance, a fictional nonprofit, so you can see how each step works before using your own courses. Follow the hints in each step and click <b>Next</b> at the bottom. Courses are made up; job data is real.</span>
     <button class="btn" id="startOwn" type="button">Start my own</button>
   </div>
   <nav aria-label="Your workflow"><ol class="pathbar" id="pathbar"></ol></nav>
 
   <!-- ADD -->
   <section class="pane" id="pane-add" hidden>
+    <div class="why" id="why-add"></div>
     <div class="pane-head"><div><h2 id="addTitle">Add your courses</h2><p>A title and a few sentences per course. Name the tools, tasks and topics learners actually practice. Specific descriptions give better results.</p></div></div>
     <div class="grid2">
       <div>
@@ -400,7 +411,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
       </div>
       <section class="panel">
         <h3>Bring in your catalog</h3>
-        <p class="help">Upload or paste a CSV with three columns: code, title, description.</p>
+        <p class="help">Upload or paste a CSV<button type="button" class="tip" aria-label="What does this mean?" data-tip="A simple spreadsheet file. In Excel or Google Sheets, make three columns (code, title, description), then choose File, Save As or Download, and pick CSV.">?</button> with three columns: code, title, description.</p>
         <input type="file" id="csvFile" accept=".csv,.txt" aria-label="Upload a CSV file">
         <textarea id="csvText" placeholder="code,title,description&#10;ITS 101,Computer Hardware,Hands-on PC repair and Windows setup..."></textarea>
         <div class="row-actions"><button class="btn small" type="button" id="csvReplace">Replace courses</button><button class="btn ghost small" type="button" id="csvAppend">Add to courses</button></div>
@@ -417,13 +428,14 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
 
   <!-- ANALYZE -->
   <section class="pane" id="pane-analyze" hidden>
+    <div class="why" id="why-analyze"></div>
     <div class="pane-head"><div><h2>Analyze your courses</h2><p>Choose how to find the competencies, knowledge, tools and skills in each course. Everything maps to O*NET, so it connects to real jobs. You'll review and edit the results next.</p></div></div>
     <fieldset class="field" style="margin-bottom:14px">
       <legend style="font-weight:700;margin-bottom:8px">Analysis method</legend>
       <div class="tiles methods">
-        <div class="tile"><input type="radio" name="method" id="m-built" value="built" checked><label for="m-built"><b>Built-in analysis</b><span>Instant and private. Matches your wording to O*NET. Best with detailed descriptions.</span></label></div>
-        <div class="tile"><input type="radio" name="method" id="m-api" value="api"><label for="m-api"><b>Your AI, connected</b><span>Use your own OpenAI, Claude or Gemini API key. Reads meaning, catches different wording.</span></label></div>
-        <div class="tile"><input type="radio" name="method" id="m-paste" value="paste"><label for="m-paste"><b>Your AI, copy and paste</b><span>No key needed. Copy a prompt into your AI account and paste the reply back.</span></label></div>
+        <div class="tile"><input type="radio" name="method" id="m-built" value="built" checked><label for="m-built"><b>Built-in analysis<button type="button" class="tip" aria-label="What does this mean?" data-tip="Our own matching runs right in your browser. It compares the words in your descriptions with O*NET. Nothing is sent anywhere.">?</button></b><span>Instant and private. Matches your wording to O*NET. Best with detailed descriptions.</span></label></div>
+        <div class="tile"><input type="radio" name="method" id="m-api" value="api"><label for="m-api"><b>Your AI, connected<button type="button" class="tip" aria-label="What does this mean?" data-tip="Connect your own ChatGPT, Claude or Gemini account with an API key. The AI reads your descriptions for meaning, so it catches matches that use different words.">?</button></b><span>Use your own OpenAI, Claude or Gemini API key. Reads meaning, catches different wording.</span></label></div>
+        <div class="tile"><input type="radio" name="method" id="m-paste" value="paste"><label for="m-paste"><b>Your AI, copy and paste<button type="button" class="tip" aria-label="What does this mean?" data-tip="Same AI analysis without an API key. You copy a prompt into your regular AI chat, then paste its answer back here.">?</button></b><span>No key needed. Copy a prompt into your AI account and paste the reply back.</span></label></div>
         <div class="tile"><input type="radio" name="method" id="m-manual" value="manual"><label for="m-manual"><b>I'll tag them myself</b><span>Skip analysis and add competencies by hand on the next step.</span></label></div>
       </div>
     </fieldset>
@@ -431,12 +443,12 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     <section class="panel" id="mApi" hidden>
       <h3>Connect your AI</h3>
       <div class="ai-grid">
-        <label for="aiProvider">AI provider<select id="aiProvider"><option value="openai">OpenAI (ChatGPT)</option><option value="anthropic">Anthropic (Claude)</option><option value="gemini">Google (Gemini)</option></select></label>
-        <label for="aiModel">Model<input id="aiModel" list="aiModels" autocomplete="off"><datalist id="aiModels"></datalist></label>
+        <label for="aiProvider"><span>AI provider<button type="button" class="tip" aria-label="What does this mean?" data-tip="The company whose AI you use: OpenAI makes ChatGPT, Anthropic makes Claude, Google makes Gemini.">?</button></span><select id="aiProvider"><option value="openai">OpenAI (ChatGPT)</option><option value="anthropic">Anthropic (Claude)</option><option value="gemini">Google (Gemini)</option></select></label>
+        <label for="aiModel"><span>Model<button type="button" class="tip" aria-label="What does this mean?" data-tip="Each provider offers several versions of its AI, called models. We fill in a good everyday choice. Once your key is checked, this box lists every model on your account if you want a different one.">?</button></span><input id="aiModel" list="aiModels" autocomplete="off"><datalist id="aiModels"></datalist></label>
       </div>
-      <label class="lbl" for="aiKey">API key<input id="aiKey" type="password" autocomplete="off" placeholder="Paste your API key"></label>
+      <label class="lbl" for="aiKey"><span>API key<button type="button" class="tip" aria-label="What does this mean?" data-tip="A private code from your AI provider, like a password, that lets this page send a request to your own account. Your provider bills you for what you use. Never share it publicly.">?</button></span><input id="aiKey" type="password" autocomplete="off" placeholder="Paste your API key"></label>
       <p class="note">Your key stays in this page's memory and goes only to the provider you choose. It's never saved and is cleared when you close the tab. Your course titles and descriptions are sent to that provider for this request.</p>
-      <div class="row-actions"><button class="btn" type="button" id="aiRun">Analyze with my AI</button><button class="btn ghost small" type="button" id="aiModelsBtn">Load my models</button></div>
+      <div class="row-actions"><button class="btn" type="button" id="aiRun">Analyze with my AI</button></div>
       <p class="status-line" id="aiMsg"></p>
       <details><summary>How to get an API key</summary><ol class="steps-list" id="keyHow" style="margin-top:8px"></ol></details>
     </section>
@@ -453,6 +465,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
 
   <!-- REVIEW -->
   <section class="pane" id="pane-review" hidden>
+    <div class="why" id="why-review"></div>
     <div class="pane-head"><div><h2>What learners will gain</h2><p>Results are accepted automatically. Remove anything that doesn't fit, or add what's missing. Changes update job matches right away.</p></div>
       <div class="row-actions"><button class="btn ghost small" type="button" id="expandAll">Expand all</button></div></div>
     <div class="list" id="review"></div>
@@ -460,6 +473,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
 
   <!-- PROFILE -->
   <section class="pane" id="pane-profile" hidden>
+    <div class="why" id="why-profile"></div>
     <div class="pane-head"><div><h2>Program profile</h2><p>Everything learners gain across your program, built from the competencies you kept.</p></div><button class="btn ghost small" type="button" id="copyProfile">Copy profile</button></div>
     <p class="toast" id="profileToast" role="status" style="text-align:left"></p>
     <div id="profile"></div>
@@ -467,9 +481,10 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
 
   <!-- MATCHES -->
   <section class="pane" id="pane-matches" hidden>
+    <div class="why" id="why-matches"></div>
     <div class="pane-head"><div><h2>Jobs your courses lead to</h2><p>Ranked by how many of each occupation's work activities your courses build, plus how closely your descriptions match. Add good fits to your targets; hide the rest.</p></div>
       <div class="filters">
-        <label for="fEdu">Typical entry education<select id="fEdu"><option value="99">Any level</option><option value="1">High school or less</option><option value="3">Up to postsecondary certificate</option><option value="4">Up to associate's degree</option><option value="5">Up to bachelor's degree</option></select></label>
+        <label for="fEdu"><span>Typical entry education<button type="button" class="tip" aria-label="What does this mean?" data-tip="The education most people need to start this job, according to the Bureau of Labor Statistics. Use it to focus on jobs your learners can reach.">?</button></span><select id="fEdu"><option value="99">Any level</option><option value="1">High school or less</option><option value="3">Up to postsecondary certificate</option><option value="4">Up to associate's degree</option><option value="5">Up to bachelor's degree</option></select></label>
         <label for="fSort">Sort by<select id="fSort"><option value="match">Best match</option><option value="wage">Highest median pay</option><option value="emp">Most jobs nationally</option></select></label>
       </div></div>
     <div class="list" id="matches"></div>
@@ -477,6 +492,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
 
   <!-- TARGETS -->
   <section class="pane" id="pane-targets" hidden>
+    <div class="why" id="why-targets"></div>
     <div class="pane-head"><div><h2>Target jobs</h2><p>Search 900+ occupations by everyday job titles. Each target shows what the job requires and, once you add courses, what your program covers.</p></div></div>
     <div class="search">
       <label for="jobSearch" style="font-weight:700;font-size:14px;display:block;margin-bottom:6px">Find a job</label>
@@ -489,6 +505,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
 
   <!-- AUDIT -->
   <section class="pane" id="pane-audit" hidden>
+    <div class="why" id="why-audit"></div>
     <div class="pane-head"><div><h2>Program audit</h2><p>How well your courses cover each target job, the gaps to close first, and courses no target job calls for.</p></div><button class="btn ghost small" type="button" id="copyAudit">Copy audit summary</button></div>
     <p class="toast" id="auditToast" role="status" style="text-align:left"></p>
     <textarea class="copybox" id="copyBox" readonly hidden aria-label="Text to copy"></textarea>
@@ -530,6 +547,26 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
 (function(){
   function $(id){return document.getElementById(id);}
   function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+  function TIP(t){return '<button type="button" class="tip" aria-label="What does this mean?" data-tip="'+String(t).replace(/"/g,'&quot;')+'">?</button>';}
+  var TIPS={
+    'Competencies':'Standard statements from the U.S. Department of Labor that describe work people do, like “Install computer hardware.” Jobs use the same statements, which is how we connect courses to jobs.',
+    'Knowledge areas':'Broad subject areas a job draws on, like Customer and Personal Service or Mathematics. From O*NET.',
+    'Tools and technology':'Specific software or equipment named in the course description that also appears in O*NET job data.',
+    'Skills':'Abilities that carry across many jobs, like Troubleshooting or Speaking. From O*NET\u2019s list of 35 skills.',
+    'outcomes':'Plain-language statements of what learners can do after the course, written from the competencies below.',
+    'pay':'Half of workers in this job nationally earn more and half earn less. From the BLS, May 2025.',
+    'hourly':'The median hourly wage nationally, from the BLS, May 2025.',
+    'jobs':'How many people hold this job across the U.S., from the BLS, May 2025.',
+    'edu':'The education most people need to start this job, according to the BLS.',
+    'tier':'How closely this job lines up with your courses compared with your best match. Strong matches share the most competencies and wording.',
+    'soc':'The official government code for this occupation. It links to the job\u2019s full O*NET profile.',
+    'cov':'The share of this job\u2019s key requirements (its top work activities, knowledge areas and tools) that at least one of your courses builds.',
+    'matrix':'Each number shows how many of a job\u2019s key requirements a course covers. Darker cells carry more weight.',
+    'gaps':'Requirements none of your courses cover yet, ranked by how many target jobs need them.',
+    'thin':'Competencies that only one course builds. If that course changes or is cut, the program loses them.',
+    'custom':'Something you added that isn\u2019t on O*NET\u2019s list. It shows in your profile but doesn\u2019t affect job matching.',
+    'nofit':'Hides this job from your list. You can show hidden jobs again anytime.'
+  };
   function money(n){return n==null?null:"$"+Math.round(n).toLocaleString("en-US");}
   function num(n){return n==null?null:Math.round(n).toLocaleString("en-US");}
   var DATA=JSON.parse($("occData").textContent), OCC=DATA.occ, DWA=DATA.dwa, SKILLS=DATA.skills, BY={};
@@ -610,22 +647,50 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     nonprofit:{label:"Nonprofit",note:"Workforce, education or youth-serving",item:"module"}};
   var PATHS={
     courses:{label:"Start with courses",steps:["add","analyze","review","profile","matches","audit"],
-      sub:"Turn course descriptions into competencies, then see the jobs they lead to.",
+      sub:"This path answers a simple question: what do our courses actually teach, and where can that take learners? We'll read your course descriptions, translate them into the competencies employers recognize, and show you the jobs they lead to.",
       need:"<b>Have ready:</b><ul><li>Course titles and short descriptions (a catalog PDF works with the AI prompt we provide)</li><li>Optional: an OpenAI, Claude or Gemini account for sharper analysis</li></ul>"},
     jobs:{label:"Start with jobs",steps:["targets","add","analyze","review","audit"],
-      sub:"See what the jobs you're aiming for require, then check whether your courses build it.",
+      sub:"This path starts with the destination. Pick the jobs your learners are aiming for and we'll show what each one requires, in the same terms the U.S. Department of Labor uses. Add your courses and we'll show how well your program gets learners there.",
       need:"<b>Have ready:</b><ul><li>The jobs your learners are aiming for (everyday titles are fine)</li><li>Optional: course titles and descriptions to check coverage</li></ul>"},
     compare:{label:"Compare both",steps:["add","analyze","review","profile","targets","audit"],
-      sub:"A full audit: what your program teaches against what your target jobs require.",
+      sub:"This path puts your program and the jobs it promises side by side. We'll translate your courses into competencies, line them up against your target jobs, and show where the program is strong and where the gaps are.",
       need:"<b>Have ready:</b><ul><li>Course titles and short descriptions</li><li>The jobs your program prepares learners for</li></ul>"}
   };
-  var STEP={add:{t:"Add courses",d:"Type them in, upload a CSV, or use our AI prompt to convert a catalog."},
-    analyze:{t:"Analyze",d:"Find the competencies, knowledge, tools and skills in each course. Built-in, or with your own AI."},
-    review:{t:"Review what learners gain",d:"See outcomes and O*NET-linked competencies under each course. Remove or add anything."},
-    profile:{t:"Program profile",d:"A summary of everything learners gain across your program."},
-    matches:{t:"Job matches",d:"Occupations your courses lead to, with pay, jobs and education from BLS. Pick your targets."},
-    targets:{t:"Target jobs",d:"Search 900+ occupations and see what each requires: work activities, knowledge, tools and skills."},
-    audit:{t:"Audit",d:"Coverage by job, the gaps to close first, and courses no target job calls for."}};
+  var STEP={add:{t:"Add courses"},analyze:{t:"Analyze"},review:{t:"Review what learners gain"},profile:{t:"Program profile"},matches:{t:"Job matches"},targets:{t:"Target jobs"},audit:{t:"Audit"}};
+  /* Story copy: s = the "how it works" narrative, w = the why inside each step */
+  function story(step,path){
+    var S={
+      add:"First, we need to collect the courses you'd like to analyze. You can type them in one at a time, upload a CSV file saved from Excel or Google Sheets, or copy our AI prompt into ChatGPT, Claude, Gemini or Copilot along with your catalog pages to convert a whole catalog at once. We recommend starting with a handful of courses or one program at a time, so the results stay focused and easy to review.",
+      analyze:"Next, we read each course and translate it into the language of work: the competencies, knowledge, tools and skills it builds. We use O*NET, the U.S. Department of Labor's catalog of what every job involves, so your courses and real jobs are described the same way. You choose how: our built-in analysis (instant and private), your own AI tool for a deeper read, or tagging courses yourself.",
+      review:"Then you check our work. Under each course you'll see what learners will be able to do, plus the competencies behind it. You know your courses best, so remove anything that doesn't fit and add anything we missed. Every change updates your results right away.",
+      profile:"With your review done, we roll everything up into a program profile: the competencies your program builds most, the ones that rest on a single course, and the knowledge and tools learners leave with. It's a one-page answer to “What does this program teach?”",
+      matches:"Now the payoff. We compare your program's competencies with more than 900 occupations and show the jobs it prepares learners for, with national pay, number of jobs and typical education from the Bureau of Labor Statistics. Save the ones that fit as your target jobs.",
+      targets:path==="jobs"?"We start with the destination. Search for the jobs your learners are aiming for, using everyday titles like “medical assistant” or “help desk.” For each one, you'll see what the job involves day to day, the knowledge and tools it calls for, and what it pays nationally.":"Next, choose the jobs your program prepares learners for. We'll suggest some based on your courses, or you can search 900+ occupations by everyday titles. These become the yardstick for your audit.",
+      audit:"Finally, the audit brings it all together: how much of each target job your program covers, which courses carry the most weight, the gaps to close first, and any courses no target job calls for. It's built to start a conversation with faculty and employer partners."
+    };
+    if(path==="jobs"&&step==="add")return "If you'd like to know whether your program gets learners there, add your courses next. Type them in, upload a CSV, or use our AI prompt to convert a catalog. Start with a handful of courses or one program. Skip this if you only want to explore what the jobs require.";
+    return S[step];
+  }
+  function why(step,path){
+    var W={
+      add:["<b>Why this step:</b> everything that follows is built from your course descriptions. The clearer they are, the better your results. Descriptions that name the tools, tasks and topics learners actually practice give the strongest matches.","<b>Tip:</b> start with one program or 5 to 10 courses. You can always add more."],
+      analyze:["<b>Why this step:</b> course descriptions and job descriptions use different words for the same work. Translating both into O*NET terms lets us compare them fairly.","<b>Which method?</b> Built-in analysis is instant and private, and a good place to start. Connect your own AI if your descriptions are short or use unusual wording."],
+      review:["<b>Why this step:</b> automated analysis gives you a strong first draft. Your review turns it into something you can stand behind with faculty, employers and accreditors.","<b>What to do:</b> open each course, remove anything that doesn't fit with ×, and use the + Add boxes for anything missing."],
+      profile:["<b>Why this step:</b> single courses tell part of the story. The profile shows the whole program, including competencies that depend on just one course."],
+      matches:["<b>Why this step:</b> this is where the program's value becomes concrete for learners, advisors and employer partners: real jobs and real pay.","<b>What to do:</b> add the jobs that fit to your targets, and click Not a fit to hide the rest."],
+      targets:[path==="jobs"?"<b>Why this step:</b> starting from the destination keeps your program honest about where it leads. Each job card shows what O*NET says the work involves.":"<b>Why this step:</b> target jobs give the audit something to measure against. Pick the jobs you'd name in a brochure or an employer meeting.","<b>What to do:</b> search by everyday titles and click Add. Open “What this job requires” to see the details."],
+      audit:["<b>Why this step:</b> the audit turns everything into decisions: what to keep, what to strengthen and what to add.","<b>What to do:</b> start with the gaps needed by the most jobs. Copy the summary to share with your team."]
+    };
+    if(path==="jobs"&&step==="add")W.add=["<b>Why this step (optional):</b> adding courses lets us show how much of each target job your program already covers. Skip ahead to the audit only after you add courses."];
+    return W[step];
+  }
+  var HINT={add:"In the sample: six courses are already here. Read a description or two, then click Next.",
+    analyze:"In the sample: built-in analysis is selected. Click Analyze courses to watch it work.",
+    review:"In the sample: open a course to see what learners gain. Try removing a competency with × or adding one.",
+    profile:"In the sample: this summary comes from the competencies you kept on the last step.",
+    matches:"In the sample: notice the competencies listed under each job. That's the evidence behind the match.",
+    targets:"In the sample: three target jobs are already added. Try searching for another one, like “network.”",
+    audit:"In the sample: each gap traces back to a target job. When you're ready, click Start my own at the top."};
   var OPTIONAL={jobs:{add:1,analyze:1,review:1}};
 
   var SAMPLE_COURSES=[
@@ -652,9 +717,9 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
   $("sampleFrom1").addEventListener("click",function(){wizPath="compare";wizSample=true;document.getElementById("p-compare").checked=true;renderFlow();wiz(2);});
   function renderFlow(){
     var P=PATHS[wizPath];
-    $("flowTitle").textContent=(wizSample?"The sample: ":"")+P.label+": how it works";
-    $("flowSub").textContent=P.sub+(wizSample?" The sample opens on the finished audit, and you can step through every stage.":"");
-    $("flowList").innerHTML=P.steps.map(function(s,i){return '<li data-n="'+(i+1)+'"><div><b>'+STEP[s].t+((OPTIONAL[wizPath]||{})[s]?'<span class="opt">Optional</span>':'')+'</b><span>'+STEP[s].d+'</span></div></li>';}).join("");
+    $("flowTitle").textContent=(wizSample?"Sample walkthrough: ":"How it works: ")+P.label;
+    $("flowSub").textContent=P.sub+(wizSample?" In the sample, everything is pre-filled so you can walk through each step and see how it works.":"");
+    $("flowList").innerHTML=P.steps.map(function(s,i){return '<li data-n="'+(i+1)+'"><div><b>'+STEP[s].t+((OPTIONAL[wizPath]||{})[s]?'<span class="opt">Optional</span>':'')+'</b><span>'+story(s,wizPath)+'</span></div></li>';}).join("");
     $("flowNeed").innerHTML=wizSample?"<b>No prep needed.</b> The sample uses six fictional course descriptions and three real occupations.":P.need;
     $("startBtn").textContent=wizSample?"Open the sample":"Start mapping";
   }
@@ -669,8 +734,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     if(miss.length){$("err3").textContent="Before you start, please "+miss.join(" and ")+".";return;}
     $("err3").textContent="";
     if(wizSample){
-      state={view:"work",mode:"sample",path:"compare",org:"Riverbend Workforce Alliance",type:"nonprofit",courses:JSON.parse(JSON.stringify(SAMPLE_COURSES)),an:[],ed:[],targets:SAMPLE_TARGETS.slice(),hidden:[],step:"audit",fEdu:"99",fSort:"match",method:"built"};
-      state.an=state.courses.map(analyzeCourse);
+      state={view:"work",mode:"sample",path:"compare",org:"Riverbend Workforce Alliance",type:"nonprofit",courses:JSON.parse(JSON.stringify(SAMPLE_COURSES)),an:[],ed:[],targets:SAMPLE_TARGETS.slice(),hidden:[],step:"add",fEdu:"99",fSort:"match",method:"built"};
     } else {
       var org=$("orgName").value.trim();
       if(state.mode==="mine"&&state.type){state.path=wizPath;state.org=org;state.type=t.value;if(PATHS[wizPath].steps.indexOf(state.step)<0)state.step=PATHS[wizPath].steps[0];}
@@ -718,6 +782,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
   $("pathbar").addEventListener("click",function(e){var b=e.target.closest("button[data-step]");if(b)go(b.getAttribute("data-step"));});
   function go(s){
     state.step=s;save();
+    var wb=$("why-"+s); if(wb){var lines=why(s,state.path)||[];wb.innerHTML='<span class="ic" aria-hidden="true">i</span><div>'+lines.map(function(l){return "<p>"+l+"</p>";}).join("")+(state.mode==="sample"&&HINT[s]?'<p class="sample-hint">'+HINT[s]+'</p>':"")+'</div>';}
     ["add","analyze","review","profile","matches","targets","audit"].forEach(function(x){$("pane-"+x).hidden=x!==s;});
     var st=steps(),i=st.indexOf(s);
     $("prevStep").style.visibility=i>0?"visible":"hidden";
@@ -809,11 +874,18 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     return fetch("https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":aiKey},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseMimeType:"application/json"}})}).then(rj).then(function(d){return d.candidates[0].content.parts.map(function(x){return x.text||"";}).join("");});}
   $("aiRun").addEventListener("click",function(){var el=$("aiMsg");if(!aiKey){el.className="status-line err";el.textContent="Paste your API key first.";return;}if(!activeIdx().length){el.className="status-line err";el.textContent="Add courses first.";return;}
     el.className="status-line";el.textContent="Asking your AI… this can take up to a minute.";callAI(aiPrompt()).then(function(t){applyAI(t,el);}).catch(function(e){el.className="status-line err";el.textContent="AI request failed: "+netErr(e);});});
-  $("aiModelsBtn").addEventListener("click",function(){var p=$("aiProvider").value,el=$("aiMsg");if(!aiKey){el.className="status-line err";el.textContent="Paste your API key first.";return;}
+  var keyTimer=null;
+  function verifyKey(){var p=$("aiProvider").value,el=$("aiMsg");if(!aiKey||aiKey.length<20){return;}
     var req=p==="openai"?fetch("https://api.openai.com/v1/models",{headers:{"Authorization":"Bearer "+aiKey}}).then(rj).then(function(d){return d.data.map(function(m){return m.id;});})
       :p==="anthropic"?fetch("https://api.anthropic.com/v1/models",{headers:{"x-api-key":aiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"}}).then(rj).then(function(d){return d.data.map(function(m){return m.id;});})
       :fetch("https://generativelanguage.googleapis.com/v1beta/models",{headers:{"x-goog-api-key":aiKey}}).then(rj).then(function(d){return d.models.map(function(m){return m.name.replace("models/","");});});
-    el.className="status-line";el.textContent="Loading models…";req.then(function(ids){ids.sort();$("aiModels").innerHTML=ids.map(function(id){return '<option value="'+esc(id)+'">';}).join("");el.className="status-line ok";el.textContent=ids.length+" models available. Click the Model box to choose one.";}).catch(function(e){el.className="status-line err";el.textContent="Couldn't load models: "+netErr(e);});});
+    el.className="status-line";el.textContent="Checking your key…";
+    req.then(function(ids){ids.sort();$("aiModels").innerHTML=ids.map(function(id){return '<option value="'+esc(id)+'">';}).join("");
+      var cur=$("aiModel").value.trim(), ok=ids.indexOf(cur)>-1||ids.some(function(id){return id.indexOf(cur)===0;});
+      el.className="status-line ok";el.textContent="Key works ✓ "+ids.length+" models available on your account."+(ok?" You're set: click Analyze with my AI.":" The suggested model isn't on your account, so pick one from the Model box.");})
+      .catch(function(e){el.className="status-line err";el.textContent="We couldn't use that key: "+netErr(e)+" Check that you copied the whole key and picked the right provider.";});}
+  $("aiKey").addEventListener("input",function(){clearTimeout(keyTimer);keyTimer=setTimeout(verifyKey,700);});
+  $("aiProvider").addEventListener("change",function(){if(aiKey)verifyKey();});
 
   /* ===== REVIEW (auto-accept, edit if needed) ===== */
   function final(i){
@@ -839,8 +911,8 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
       var count=f.dw.length+f.k.length+f.sw.length+f.sk.length+f.cu.length;
       var open=openSet[i]!==undefined?openSet[i]:n===0;
       return '<details class="rcourse" data-i="'+i+'"'+(open?' open':'')+'><summary><span><b>'+esc(cname(i))+'</b><br><span class="meta">'+(analyzed?count+' items · '+(f.src==="ai"?"Analyzed by your AI":f.src==="built"?"Built-in analysis":"Tagged by hand"):"Not analyzed yet")+'</span></span><span class="chev">›</span></summary><div class="rbody">'+
-        '<div class="outcomes"><h4>Learners will be able to</h4>'+(f.outs.length?'<ul>'+f.outs.map(function(o){return '<li>'+esc(o.replace(/^Learners will be able to\s*/i,"").replace(/^./,function(c){return c.toUpperCase();}))+(f.out&&f.out.indexOf(o)>-1?' <button class="x" style="font-size:16px;padding:0 4px" type="button" data-rm="out:'+esc(o)+'" data-i="'+i+'" aria-label="Remove outcome">×</button>':'')+'</li>';}).join("")+'</ul>':'<p class="note">Add competencies below and outcomes appear here.</p>')+'</div>'+
-        layer("Competencies","O*NET work activities",f.dw.map(function(j){return chip("dw",DWA[j].n,"dw:"+j,i,DWA[j].g);}).join("")+f.cu.map(function(c){return chip("cu",c+" (custom)","cu:"+c,i);}).join(""),i,"dw","dlDwa","Search O*NET work activities or type your own")+
+        '<div class="outcomes"><h4>Learners will be able to'+TIP(TIPS.outcomes)+'</h4>'+(f.outs.length?'<ul>'+f.outs.map(function(o){return '<li>'+esc(o.replace(/^Learners will be able to\s*/i,"").replace(/^./,function(c){return c.toUpperCase();}))+(f.out&&f.out.indexOf(o)>-1?' <button class="x" style="font-size:16px;padding:0 4px" type="button" data-rm="out:'+esc(o)+'" data-i="'+i+'" aria-label="Remove outcome">×</button>':'')+'</li>';}).join("")+'</ul>':'<p class="note">Add competencies below and outcomes appear here.</p>')+'</div>'+
+        layer("Competencies","O*NET work activities",f.dw.map(function(j){return chip("dw",DWA[j].n,"dw:"+j,i,DWA[j].g);}).join("")+f.cu.map(function(c){return chip("cu",c+" (custom)","cu:"+c,i,TIPS.custom);}).join(""),i,"dw","dlDwa","Search O*NET work activities or type your own")+
         layer("Knowledge areas","O*NET knowledge",f.k.map(function(k){return chip("k",k,"k:"+k,i);}).join(""),i,"k","dlK","Add a knowledge area")+
         layer("Tools and technology","named in the description",f.sw.map(function(s){return chip("sw",s,"sw:"+s,i);}).join(""),i,"sw","","Add a tool or software")+
         layer("Skills","O*NET skills",f.sk.map(function(s){return chip("sk",s,"sk:"+s,i);}).join(""),i,"sk","dlS","Add an O*NET skill")+
@@ -849,7 +921,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     }).join("");
   }
   function layer(title,src,chips,i,t,list,ph){
-    return '<div class="layer"><h4>'+title+' <span class="src">· '+src+'</span></h4><div class="chips">'+(chips||'<span class="note">None yet</span>')+'</div>'+
+    return '<div class="layer"><h4>'+title+' <span class="src">· '+src+'</span>'+TIP(TIPS[title])+'</h4><div class="chips">'+(chips||'<span class="note">None yet</span>')+'</div>'+
       '<div class="add-row"><input data-addt="'+t+'" data-i="'+i+'" '+(list?'list="'+list+'" ':'')+'placeholder="'+ph+'" aria-label="'+ph+'"><button class="btn ghost small" type="button" data-addbtn="'+t+'" data-i="'+i+'">+ Add</button></div></div>';
   }
   function edits(i){if(!state.ed[i])state.ed[i]={rm:{},add:[]};return state.ed[i];}
@@ -892,7 +964,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     var thin=P.rdw.filter(function(j){return P.dw[j].length===1;});
     el.innerHTML='<div class="stats"><div class="stat"><b>'+T+'</b><span>courses</span></div><div class="stat"><b>'+P.rdw.length+'</b><span>O*NET competencies</span></div><div class="stat"><b>'+P.rk.length+'</b><span>knowledge areas</span></div><div class="stat"><b>'+P.rsw.length+'</b><span>tools and technologies</span></div></div>'+
       '<div class="grid2" style="margin-top:14px"><div class="list"><section class="panel"><h3>Top competencies across your program</h3><p class="help">O*NET work activities, by how many courses build them.</p>'+rankList(P.rdw,P.dw,function(j){return DWA[j].n;},T,"var(--s4)")+'</section>'+
-      (thin.length?'<section class="panel"><h3>Built in only one course</h3><p class="help">These rely on a single course. If they matter for your target jobs, consider reinforcing them elsewhere.</p><p style="margin:0;font-size:14px">'+thin.slice(0,8).map(function(j){return esc(DWA[j].n)+' <span class="note">('+esc(cname(P.dw[j][0]))+')</span>';}).join("<br>")+'</p></section>':'')+
+      (thin.length?'<section class="panel"><h3>Built in only one course'+TIP(TIPS.thin)+'</h3><p class="help">These rely on a single course. If they matter for your target jobs, consider reinforcing them elsewhere.</p><p style="margin:0;font-size:14px">'+thin.slice(0,8).map(function(j){return esc(DWA[j].n)+' <span class="note">('+esc(cname(P.dw[j][0]))+')</span>';}).join("<br>")+'</p></section>':'')+
       '</div><div class="list"><section class="panel"><h3>Knowledge areas</h3>'+rankList(P.rk,P.k,function(x){return x;},T,"var(--s3)")+'</section>'+
       '<section class="panel"><h3>Tools and technology</h3>'+rankList(P.rsw,P.sw,function(x){return x;},T,"var(--s2)")+'</section>'+
       '<section class="panel"><h3>Skills</h3>'+rankList(P.rsk,P.sk,function(x){return x;},T,"var(--muted)")+'</section></div></div>';
@@ -924,7 +996,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
   var EDU={"No formal educational credential":0,"High school diploma or equivalent":1,"Some college, no degree":2,"Postsecondary nondegree award":3,"Associate's degree":4,"Bachelor's degree":5,"Master's degree":6,"Doctoral or professional degree":7};
   function eduLevel(o){return o.ed in EDU?EDU[o.ed]:(o.z?[0,1,2,4,5,6][o.z]:9);}
   function facts(o){var w=o.aw!=null?money(o.aw):(o.awtop?"Top-coded by BLS":null);
-    return '<div class="facts4"><div class="fact"><b>'+(w||"Not available")+'</b><span>Median annual pay (U.S.)</span></div><div class="fact"><b>'+(o.hw!=null?"$"+o.hw.toFixed(2):"–")+'</b><span>Median hourly pay</span></div><div class="fact"><b>'+(o.emp!=null?num(o.emp):"Not available")+'</b><span>Jobs nationally</span></div><div class="fact"><b style="font-size:14px">'+esc(o.ed||"Not assigned")+'</b><span>Typical entry education</span></div></div>';}
+    return '<div class="facts4"><div class="fact"><b>'+(w||"Not available")+'</b><span>Median annual pay (U.S.)'+TIP(TIPS.pay)+'</span></div><div class="fact"><b>'+(o.hw!=null?"$"+o.hw.toFixed(2):"–")+'</b><span>Median hourly pay'+TIP(TIPS.hourly)+'</span></div><div class="fact"><b>'+(o.emp!=null?num(o.emp):"Not available")+'</b><span>Jobs nationally'+TIP(TIPS.jobs)+'</span></div><div class="fact"><b style="font-size:14px">'+esc(o.ed||"Not assigned")+'</b><span>Typical entry education'+TIP(TIPS.edu)+'</span></div></div>';}
   function srcline(o){return '<div class="srcline">Sources: <a href="https://www.onetonline.org/link/summary/'+o.c+'">O*NET OnLine '+o.c+'</a> (O*NET 31.0) · Pay and jobs: <a href="https://www.bls.gov/oes/current/oes'+o.c.slice(0,7).replace("-","")+'.htm">BLS OEWS, May 2025</a>'+(o.ed?' · Education: BLS Employment Projections 2025'+(o.ooh?' (<a href="'+esc(o.ooh)+'">Occupational Outlook Handbook</a>)':''):'')+'</div>';}
 
   /* ===== MATCHES ===== */
@@ -941,10 +1013,10 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
       var byCourse={};m.hits.forEach(function(j){activeIdx().forEach(function(i){if(final(i).dw.indexOf(j)>-1)byCourse[i]=1;});});
       var courses=Object.keys(byCourse).map(Number);if(!courses.length)courses=m.per.slice(0,2).map(function(p){return p.i;});
       var isT=state.targets.indexOf(o.c)>-1;
-      return '<article class="job"><div class="job-top"><div><h3><a href="https://www.onetonline.org/link/summary/'+o.c+'">'+esc(o.t)+'</a></h3><span class="code">O*NET-SOC '+o.c+(o.alt&&o.alt.length?' · Also called: '+o.alt.slice(0,3).map(esc).join(", "):'')+'</span></div><span class="tier '+tier[0]+'">'+tier[1]+'</span></div>'+facts(o)+
+      return '<article class="job"><div class="job-top"><div><h3><a href="https://www.onetonline.org/link/summary/'+o.c+'">'+esc(o.t)+'</a></h3><span class="code">O*NET-SOC '+o.c+TIP(TIPS.soc)+(o.alt&&o.alt.length?' · Also called: '+o.alt.slice(0,3).map(esc).join(", "):'')+'</span></div><span class="tier '+tier[0]+'">'+tier[1]+TIP(TIPS.tier)+'</span></div>'+facts(o)+
         '<div class="evid">'+(m.hits.length?'<div><b>Competencies your courses build for this job ('+m.hits.length+'):</b><ul>'+m.hits.slice(0,4).map(function(j){return '<li>'+esc(DWA[j].n)+'</li>';}).join("")+'</ul></div>':'<div>Matched on description wording. No confirmed competencies overlap yet.</div>')+
         '<div><b>Courses behind this match:</b> '+courses.slice(0,4).map(cname).map(esc).join(", ")+'</div></div>'+
-        '<div class="row-actions">'+(isT?'<span class="tagok">In your targets</span>':'<button class="btn small" type="button" data-target="'+o.c+'">+ Add to targets</button>')+'<button class="btn ghost small" type="button" data-hide="'+o.c+'">Not a fit</button></div>'+srcline(o)+'</article>';
+        '<div class="row-actions">'+(isT?'<span class="tagok">In your targets</span>':'<button class="btn small" type="button" data-target="'+o.c+'">+ Add to targets</button>')+'<button class="btn ghost small" type="button" data-hide="'+o.c+'">Not a fit</button>'+TIP(TIPS.nofit)+'</div>'+srcline(o)+'</article>';
     }).join("")||'<div class="empty">No matches at this education level. Try "Any level."</div>');
   }
   $("matches").addEventListener("click",function(e){var t=e.target.getAttribute("data-target"),h=e.target.getAttribute("data-hide");if(e.target.id==="unhide"){state.hidden=[];touch();renderMatches();return;}
@@ -978,7 +1050,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     if(!state.targets.length){el.innerHTML='<div class="empty">No target jobs yet. Search above'+(sug.innerHTML?', or add a suggestion':'')+'.</div>';return;}
     el.innerHTML=state.targets.map(function(code){var o=BY[code];if(!o)return "";var cv=coverage(o),col=cv.pct>=0.7?"var(--s4)":cv.pct>=0.4?"var(--s3)":"var(--s1)";
       return '<article class="job"><div class="job-top"><div><h3><a href="https://www.onetonline.org/link/summary/'+o.c+'">'+esc(o.t)+'</a></h3><span class="code">O*NET-SOC '+o.c+'</span></div><button class="btn ghost small" type="button" data-remove="'+o.c+'">Remove</button></div>'+facts(o)+
-        (cv.has?'<div class="cov"><div class="big" style="color:'+col+'">'+Math.round(cv.pct*100)+'%</div><div><b>of this job\'s key requirements are covered</b><div class="bar" style="margin-top:6px"><span style="width:'+Math.round(cv.pct*100)+'%;background:'+col+'"></span></div>'+(cv.recs.length?'<p class="note" style="margin-top:6px">Most relevant courses: '+cv.recs.slice(0,3).map(function(i){return esc(cname(i))+' ('+cv.count[i]+')';}).join(", ")+'</p>':'')+'</div></div>':'<p class="note">Add and analyze your courses to see coverage. Courses that build this job usually develop the competencies below.</p>')+
+        (cv.has?'<div class="cov"><div class="big" style="color:'+col+'">'+Math.round(cv.pct*100)+'%</div><div><b>of this job\'s key requirements are covered</b>'+TIP(TIPS.cov)+'<div class="bar" style="margin-top:6px"><span style="width:'+Math.round(cv.pct*100)+'%;background:'+col+'"></span></div>'+(cv.recs.length?'<p class="note" style="margin-top:6px">Most relevant courses: '+cv.recs.slice(0,3).map(function(i){return esc(cname(i))+' ('+cv.count[i]+')';}).join(", ")+'</p>':'')+'</div></div>':'<p class="note">Add and analyze your courses to see coverage. Courses that build this job usually develop the competencies below.</p>')+
         '<details'+(cv.has?'':' open')+'><summary>What this job requires ('+cv.reqs.length+')</summary><ul class="req" style="margin-top:10px">'+cv.reqs.map(function(r){return '<li><i class="'+(r.by.length?"ok":"no")+'"></i><span>'+esc(r.text)+'<small>'+r.type+(cv.has?(r.by.length?' · Covered by '+r.by.slice(0,2).map(cname).map(esc).join(", "):' · Not covered yet'):'')+'</small></span></li>';}).join("")+'</ul></details>'+
         (o.ojt?'<p class="note">Training after hire: '+esc(o.ojt)+'. Related work experience: '+esc(o.exp||"–")+'. (BLS Employment Projections 2025)</p>':'')+srcline(o)+'</article>';}).join("");
   }
@@ -994,11 +1066,11 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
   function renderAudit(){
     var A=auditData(),el=$("audit");
     if(!A.act.length||!A.jobs.length){el.innerHTML='<div class="empty">The audit needs analyzed courses and at least one target job. '+(!A.act.length?'Add courses first. ':'')+(!A.jobs.length?'Add target jobs.':'')+'</div>';return;}
-    var h='<div class="grid2"><div class="list"><section class="panel"><h3>Coverage by target job</h3>'+A.jobs.map(function(j){var p=j.cv.pct,col=p>=0.7?"var(--s4)":p>=0.4?"var(--s3)":"var(--s1)";
+    var h='<div class="grid2"><div class="list"><section class="panel"><h3>Coverage by target job'+TIP(TIPS.cov)+'</h3>'+A.jobs.map(function(j){var p=j.cv.pct,col=p>=0.7?"var(--s4)":p>=0.4?"var(--s3)":"var(--s1)";
       return '<div style="display:grid;grid-template-columns:minmax(0,1fr) 48px;gap:4px 10px;font-size:14px"><b>'+esc(j.o.t)+'</b><b style="text-align:right">'+Math.round(p*100)+'%</b><div class="bar" style="grid-column:1/-1"><span style="width:'+Math.round(p*100)+'%;background:'+col+'"></span></div><span class="note" style="grid-column:1/-1">'+j.cv.covered+' of '+j.cv.reqs.length+' key requirements · '+(j.o.aw?money(j.o.aw)+' median pay · ':'')+esc(j.o.ed||"")+'</span></div>';}).join("")+'</section>'+
-      '<section class="panel"><h3>Course-by-job matrix</h3><p class="help">How many of each job\'s key requirements each course covers.</p><div class="scroll"><table class="mx"><thead><tr><th class="left">Course</th>'+A.jobs.map(function(j){return '<th>'+esc(j.o.t)+'</th>';}).join("")+'</tr></thead><tbody>'+
+      '<section class="panel"><h3>Course-by-job matrix'+TIP(TIPS.matrix)+'</h3><p class="help">How many of each job\'s key requirements each course covers.</p><div class="scroll"><table class="mx"><thead><tr><th class="left">Course</th>'+A.jobs.map(function(j){return '<th>'+esc(j.o.t)+'</th>';}).join("")+'</tr></thead><tbody>'+
       A.act.map(function(i){return '<tr><td class="left">'+esc(cname(i))+'</td>'+A.jobs.map(function(j){var n=j.cv.count[i]||0,v=j.cv.reqs.length?n/j.cv.reqs.length:0;return '<td><span class="heat" '+heat(v*2.5)+'>'+(n||"–")+'</span></td>';}).join("")+'</tr>';}).join("")+'</tbody></table></div></section></div>'+
-      '<div class="list"><section class="panel"><h3>Gaps to close first</h3>'+(A.gaps.length?'<ul class="req">'+A.gaps.slice(0,10).map(function(g){return '<li><i class="no"></i><span>'+esc(g.text)+'<small>'+g.type+' · needed by '+g.jobs.length+' of '+A.jobs.length+' target jobs</small></span></li>';}).join("")+'</ul>':'<p class="help">Every key requirement shows up in at least one course.</p>')+'</section>'+
+      '<div class="list"><section class="panel"><h3>Gaps to close first'+TIP(TIPS.gaps)+'</h3>'+(A.gaps.length?'<ul class="req">'+A.gaps.slice(0,10).map(function(g){return '<li><i class="no"></i><span>'+esc(g.text)+'<small>'+g.type+' · needed by '+g.jobs.length+' of '+A.jobs.length+' target jobs</small></span></li>';}).join("")+'</ul>':'<p class="help">Every key requirement shows up in at least one course.</p>')+'</section>'+
       (A.unused.length?'<section class="panel"><h3>Courses no target job calls for</h3><p class="help">'+A.unused.map(cname).map(esc).join(", ")+'. Keep them if they build broader skills, or rework them toward a gap.</p></section>':'')+'</div></div>';
     el.innerHTML=h;$("copyBox").hidden=true;
   }
@@ -1010,6 +1082,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     var text=L.join("\n"),box=$("copyBox"),t=$("auditToast");function fb(){box.value=text;box.hidden=false;box.focus();box.select();t.textContent="Select all and copy the text below.";}
     try{navigator.clipboard.writeText(text).then(function(){t.textContent="Audit summary copied.";box.hidden=true;},fb);}catch(e){fb();}});
 
+  document.querySelectorAll(".pane").forEach(function(pn){var w=pn.querySelector(".why"),h=pn.querySelector(".pane-head");if(w&&h)h.parentNode.insertBefore(w,h.nextSibling);});
   /* ===== Boot ===== */
   if(state.view==="work"&&state.mode==="mine"){$("intakeView").hidden=true;$("workView").hidden=false;buildWork();} else wiz(1);
 })();
