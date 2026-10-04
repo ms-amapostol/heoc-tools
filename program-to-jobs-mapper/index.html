@@ -319,6 +319,10 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
 .why p{margin:0}
 .why p + p{margin-top:6px}
 .why b{color:var(--ink)}
+.sample-banner{align-items:flex-start}
+.sample-banner .sb-k{font:800 12px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.sample-banner p{margin:0}
+.sample-banner .sb-turn{font-weight:600}
 .sample-hint{margin-top:8px !important;font-size:14px;color:var(--accent);font-weight:600}
 </style>
 </head>
@@ -400,8 +404,8 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     <div class="ctx-chips" id="ctxChips"></div>
     <button class="btn link" type="button" id="changePath">Change path or organization</button>
   </div>
-  <div class="banner" id="banner" hidden>
-    <span><strong>Welcome to the sample walkthrough.</strong> Everything is pre-filled for Riverbend Workforce Alliance, a fictional nonprofit, so you can see how each step works before using your own courses. Follow the hints in each step and click <b>Next</b> at the bottom. Courses are made up; job data is real.</span>
+  <div class="banner sample-banner" id="banner" hidden>
+    <div id="sampleText" style="display:grid;gap:6px;min-width:0;flex:1 1 420px"></div>
     <button class="btn" id="startOwn" type="button">Start my own</button>
   </div>
   <nav aria-label="Your workflow"><ol class="pathbar" id="pathbar"></ol></nav>
@@ -714,13 +718,29 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     if(path==="jobs"&&step==="add")W.add=["<b>Why this step (optional):</b> adding courses lets us show how much of each target job your program already covers. Skip ahead to the audit only after you add courses."];
     return W[step];
   }
-  var HINT={add:"In the sample: six courses are already here. Read a description or two, then click Next.",
-    analyze:"In the sample: built-in analysis is selected. Click Analyze courses to watch it work.",
-    review:"In the sample: open a course to see what learners gain. Try removing a competency with × or adding one.",
-    profile:"In the sample: this summary comes from the competencies you kept on the last step.",
-    matches:"In the sample: notice the competencies listed under each job. That's the evidence behind the match.",
-    targets:"In the sample: three target jobs are already added. Try searching for another one, like “network.”",
-    audit:"In the sample: each gap traces back to a target job. When you're ready, click Start my own at the top."};
+  var SAMPLE={
+    add:{did:"Riverbend's team started with their six-course IT Support Pathway. They typed in each course's title and a few sentences on what learners actually do.",turn:"Skim a description or two to see the level of detail that works well. There's nothing to change here, so press Next when you're ready."},
+    analyze:{did:"Riverbend chose <b>Built-in analysis</b>. Their descriptions are detailed, and they wanted instant results without sending anything to an outside AI tool.",turn:"Nothing to do on this page except get to know the four options for later. Press Next and we'll run Riverbend's analysis for you."},
+    review:{did:"Riverbend's program lead read through each course and kept most of what the analysis found.",turn:"Open a course and try it yourself: remove a competency with × or add one with + Add. Sample changes aren't saved. Press Next when you're done."},
+    profile:{did:"Riverbend looked at their whole program at once: the competencies several courses build, and the ones that rest on a single course.",turn:"Look at “Built in only one course.” That list is often the first conversation to have with faculty. Then press Next."},
+    matches:{did:"Riverbend looked at the jobs their courses lead to and saved the IT support roles their graduates apply for.",turn:"Notice the competencies listed under each job: that's the evidence behind the match. Press Next."},
+    targets:{did:"Riverbend picked three jobs their graduates apply for: Computer User Support Specialists, Computer Network Support Specialists, and Network and Computer Systems Administrators.",turn:"Open “What this job requires” on one of them, or search for another job, like “network.” Then press Next."},
+    audit:null
+  };
+  function sampleAudit(){
+    var A=auditData(); if(!A.jobs.length)return {did:"Riverbend ran the audit.",turn:"You've seen the whole process. Press Start my own to try it with your courses."};
+    var js=A.jobs.slice().sort(function(a,b){return b.cv.pct-a.cv.pct;}), hi=js[0], lo=js[js.length-1], g=A.gaps[0];
+    return {did:"Riverbend ran the audit. Their program covers the most for <b>"+esc(hi.o.t)+"</b> ("+Math.round(hi.cv.pct*100)+"%) and the least for <b>"+esc(lo.o.t)+"</b> ("+Math.round(lo.cv.pct*100)+"%)."+(g?" The top gap is <b>"+esc(g.text)+"</b>, which "+g.jobs.length+" of "+A.jobs.length+" target jobs need. That's where Riverbend would start with an employer partner.":""),
+      turn:"You've walked through the whole process. Press <b>Start my own</b> in this banner to try it with your courses."};
+  }
+  function renderSampleBanner(s){
+    if(state.mode!=="sample")return;
+    var st=steps(), i=st.indexOf(s), c=s==="audit"?sampleAudit():SAMPLE[s];
+    $("sampleText").innerHTML='<span class="sb-k">Sample walkthrough · Step '+(i+1)+' of '+st.length+': '+STEP[s].t+'</span>'+
+      (i===0?'<p>Everything here is pre-filled for Riverbend Workforce Alliance, a fictional nonprofit, so you can see how the tool works before using your own courses. Courses are made up; job data is real.</p>':'')+
+      (c?'<p><b>What Riverbend did:</b> '+c.did+'</p><p class="sb-turn">Your turn: '+c.turn+'</p>':'');
+  }
+
   var OPTIONAL={jobs:{add:1,analyze:1,review:1}};
 
   var SAMPLE_COURSES=[
@@ -735,7 +755,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
   var state={view:"intake",mode:null};
   try{var sv=JSON.parse(localStorage.getItem(KEY)||"null");if(sv&&sv.mode==="mine"&&sv.type&&sv.path)state=sv;}catch(e){}
   function save(){try{if(state.mode==="mine")localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
-  function touch(){if(state.mode==="sample"){state.mode="mine";$("banner").hidden=true;}save();}
+  function touch(){save();}
   function fresh(path,org,type){return {view:"work",mode:"mine",path:path,org:org,type:type,courses:[{code:"",title:"",desc:""}],an:[],ed:[],targets:[],hidden:[],step:PATHS[path].steps[0],fEdu:"99",fSort:"match",method:"built"};}
   var aiKey="";
 
@@ -812,14 +832,14 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
   $("pathbar").addEventListener("click",function(e){var b=e.target.closest("button[data-step]");if(b)go(b.getAttribute("data-step"));});
   function go(s){
     state.step=s;save();
-    var wb=$("why-"+s); if(wb){var lines=why(s,state.path)||[];wb.innerHTML='<span class="ic" aria-hidden="true">i</span><div>'+lines.map(function(l){return "<p>"+l+"</p>";}).join("")+(state.mode==="sample"&&HINT[s]?'<p class="sample-hint">'+HINT[s]+'</p>':"")+'</div>';}
+    var wb=$("why-"+s); if(wb){var lines=why(s,state.path)||[];wb.innerHTML='<span class="ic" aria-hidden="true">i</span><div>'+lines.map(function(l){return "<p>"+l+"</p>";}).join("")+'</div>';}
     ["add","analyze","review","profile","matches","targets","audit"].forEach(function(x){$("pane-"+x).hidden=x!==s;});
     var st=steps(),i=st.indexOf(s);
     $("prevStep").style.visibility=i>0?"visible":"hidden";
     if(i<st.length-1){$("nextStep").hidden=false;$("nextStep").textContent="Next: "+STEP[st[i+1]].t+" →";}else $("nextStep").hidden=true;
     if(s==="add")renderCourses(); if(s==="analyze")$("builtCount").textContent=activeIdx().length+" course"+(activeIdx().length===1?"":"s")+" ready. Results appear on the next step.";
     if(s==="review")renderReview(); if(s==="profile")renderProfile(); if(s==="matches")renderMatches(); if(s==="targets")renderTargets(); if(s==="audit")renderAudit();
-    renderPathbar();
+    renderPathbar(); renderSampleBanner(s);
   }
   $("prevStep").addEventListener("click",function(){var st=steps(),i=st.indexOf(state.step);if(i>0){go(st[i-1]);window.scrollTo(0,$("workView").offsetTop-10);}});
   $("nextStep").addEventListener("click",function(){var st=steps(),i=st.indexOf(state.step);
