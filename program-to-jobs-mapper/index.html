@@ -304,6 +304,12 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
 .heat{display:inline-block;min-width:40px;padding:5px 6px;border-radius:6px;font-weight:800;font-variant-numeric:tabular-nums}
 .sources{font-size:13px;color:var(--muted);display:grid;gap:6px}
 .sources a{color:var(--accent)}
+.catalog .opt{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}
+.catalog .opt > summary{font-size:15px;color:var(--ink);display:flex;gap:10px;align-items:center}
+.catalog .opt[open] > summary{margin-bottom:8px}
+.optn{width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--btn-ink);display:inline-grid;place-items:center;font:800 12px var(--body);flex:none}
+.catalog code{font-size:12.5px;background:var(--soft);padding:1px 5px;border-radius:4px}
+.paste-box{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px}
 .tip{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;border:0;background:var(--soft);color:var(--accent);font:800 11px/1 var(--body);cursor:help;position:relative;vertical-align:middle;margin-left:4px;padding:0;text-transform:none;letter-spacing:0}
 .tip:hover,.tip:focus-visible{background:var(--accent);color:var(--btn-ink)}
 .tip::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);width:max-content;max-width:min(270px,78vw);background:var(--ink);color:var(--bg);font:500 13px/1.45 var(--body);text-align:left;padding:9px 11px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .15s;z-index:30;white-space:normal}
@@ -409,19 +415,43 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
         <div class="list" id="courses"></div>
         <div class="row-actions" style="margin-top:12px"><button class="btn ghost small" type="button" id="addCourse">+ Add a course</button></div>
       </div>
-      <section class="panel">
-        <h3>Bring in your catalog</h3>
-        <p class="help">Upload or paste a CSV<button type="button" class="tip" aria-label="What does this mean?" data-tip="A simple spreadsheet file. In Excel or Google Sheets, make three columns (code, title, description), then choose File, Save As or Download, and pick CSV.">?</button> with three columns: code, title, description.</p>
-        <input type="file" id="csvFile" accept=".csv,.txt" aria-label="Upload a CSV file">
-        <textarea id="csvText" placeholder="code,title,description&#10;ITS 101,Computer Hardware,Hands-on PC repair and Windows setup..."></textarea>
-        <div class="row-actions"><button class="btn small" type="button" id="csvReplace">Replace courses</button><button class="btn ghost small" type="button" id="csvAppend">Add to courses</button></div>
-        <p class="status-line" id="csvMsg"></p>
-        <details><summary>Catalog is a PDF or webpage? Use this AI prompt</summary>
-          <p class="note" style="margin:8px 0">Paste it into ChatGPT, Claude, Gemini or Copilot with your catalog pages, then paste the result above.</p>
-          <textarea id="catalogPrompt" readonly style="min-height:150px"></textarea>
-          <button class="btn ghost small" type="button" id="copyCatalogPrompt">Copy prompt</button>
-          <p class="status-line" id="catMsg"></p>
+      <section class="panel catalog">
+        <h3>Bring in a whole list at once</h3>
+        <p class="help">Pick the option that matches what you have. Each one ends with your courses listed on the left.</p>
+        <details class="opt" open><summary><span class="optn">A</span> I have my courses in Excel or Google Sheets</summary>
+          <ol class="steps-list">
+            <li>Set up three columns with these headings: <b>code</b>, <b>title</b>, <b>description</b>.</li>
+            <li>Save it as a CSV file<button type="button" class="tip" aria-label="What does this mean?" data-tip="CSV is a plain spreadsheet format. In Excel: File, Save As, then choose CSV. In Google Sheets: File, Download, then Comma-separated values (.csv).">?</button>. In Excel: <i>File → Save As → CSV</i>. In Google Sheets: <i>File → Download → .csv</i>.</li>
+            <li>Choose the file here. Your courses load into the box below.</li>
+          </ol>
+          <input type="file" id="csvFile" accept=".csv,.txt" aria-label="Choose a CSV file">
         </details>
+        <details class="opt"><summary><span class="optn">B</span> My catalog is a PDF or a webpage</summary>
+          <p class="help" style="margin:6px 0">Your AI tool (ChatGPT, Claude, Gemini or Copilot) can turn it into the format this page needs. This part happens in your AI tool's chat window, in a separate tab.</p>
+          <ol class="steps-list">
+            <li><b>Copy the prompt</b> with the button below.</li>
+            <li><b>Open your AI tool</b> in a new tab and paste the prompt into a new chat.</li>
+            <li><b>Give it your catalog</b>, in that same chat:
+              <ul style="margin:4px 0;padding-left:18px">
+                <li><b>PDF:</b> attach the file using the paperclip or + button next to the message box. If your tool can't take files, open the PDF, copy the pages for your program, and paste that text into the chat.</li>
+                <li><b>Webpage:</b> paste the link. Some AI tools can open links and some can't. If it says it can't, copy the course text from the page and paste that instead.</li>
+              </ul></li>
+            <li><b>Send it.</b> The AI replies with lines of text that look like <code>code,title,description</code>, one course per line.</li>
+            <li><b>Copy the AI's whole reply</b> and paste it into the box below. If the AI offers a downloadable CSV file instead, save it and use option A.</li>
+          </ol>
+          <div class="row-actions"><button class="btn small" type="button" id="copyCatalogPrompt">Copy the AI prompt</button><span class="status-line" id="catMsg"></span></div>
+          <details style="margin-top:6px"><summary style="font-size:13px">See what the prompt says</summary><textarea id="catalogPrompt" readonly style="min-height:150px;margin-top:6px"></textarea></details>
+        </details>
+        <div class="paste-box">
+          <label for="csvText" style="font-weight:700;font-size:14px">Your list <span class="hint" style="font-weight:400">(from a file, the AI's reply, or typed as CSV)</span></label>
+          <textarea id="csvText" placeholder="code,title,description&#10;ITS 101,Computer Hardware,Hands-on PC repair and Windows setup..."></textarea>
+          <div class="row-actions">
+            <button class="btn small" type="button" id="csvAppend">Add to my courses</button>
+            <button class="btn ghost small" type="button" id="csvReplace">Replace my courses</button>
+            <button type="button" class="tip" aria-label="What's the difference?" data-tip="Add keeps the courses already listed on the left and adds these. Replace clears the list first, which is handy if you're starting over.">?</button>
+          </div>
+          <p class="status-line" id="csvMsg"></p>
+        </div>
       </section>
     </div>
   </section>
@@ -454,7 +484,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     </section>
     <section class="panel" id="mPaste" hidden>
       <h3>Copy and paste with your AI</h3>
-      <ol class="steps-list"><li>Copy the prompt.</li><li>Paste it into ChatGPT, Claude, Gemini or Copilot.</li><li>Paste the AI's full reply below and apply it.</li></ol>
+      <ol class="steps-list"><li><b>Copy the prompt</b> with the button below. It already includes your courses.</li><li><b>Open ChatGPT, Claude, Gemini or Copilot</b> in a new tab and paste it into a new chat. There's nothing else to attach.</li><li>The AI replies with a block of text that starts with <code>{</code>. <b>Copy all of it</b>, paste it into the box below, and click Apply.</li></ol>
       <div class="row-actions"><button class="btn ghost small" type="button" id="aiCopy">Copy AI prompt</button></div>
       <textarea id="aiPaste" placeholder="Paste the AI's reply here"></textarea>
       <div class="row-actions"><button class="btn" type="button" id="aiApply">Apply AI results</button></div>
@@ -814,12 +844,12 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
   function parseCSV(text){var rows=[],row=[],f="",q=false;for(var i=0;i<text.length;i++){var ch=text[i];if(q){if(ch=='"'){if(text[i+1]=='"'){f+='"';i++;}else q=false;}else f+=ch;}else if(ch=='"')q=true;else if(ch==','||ch=='\t'){row.push(f);f="";}else if(ch=='\n'){row.push(f);rows.push(row);row=[];f="";}else if(ch!='\r')f+=ch;}
     if(f||row.length){row.push(f);rows.push(row);}rows=rows.filter(function(r){return r.join("").trim();});if(rows.length&&/code/i.test(rows[0][0]||"")&&/title/i.test(rows[0][1]||""))rows.shift();
     return rows.map(function(r){return {code:(r[0]||"").trim(),title:(r[1]||"").trim(),desc:r.slice(2).join(", ").trim()};}).filter(function(c){return c.title||c.desc;});}
-  $("csvFile").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){$("csvText").value=r.result;$("csvMsg").className="status-line";$("csvMsg").textContent="File loaded. Choose Replace or Add.";};r.readAsText(f);});
+  $("csvFile").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){$("csvText").value=r.result;$("csvMsg").className="status-line";$("csvMsg").textContent="File loaded into the box below. Click Add to my courses.";};r.readAsText(f);});
   function importCSV(rep){var rows=parseCSV($("csvText").value);if(!rows.length){$("csvMsg").className="status-line err";$("csvMsg").textContent="No courses found. Each row needs a code, title and description.";return;}
     if(rep){state.courses=rows;state.an=[];state.ed=[];}else{var keep=activeIdx();state.courses=keep.map(function(i){return state.courses[i];}).concat(rows);state.an=keep.map(function(i){return state.an[i];});state.ed=keep.map(function(i){return state.ed[i];});}
     $("csvMsg").className="status-line ok";$("csvMsg").textContent=rows.length+" course"+(rows.length>1?"s":"")+" imported.";$("csvText").value="";touch();renderCourses();recompute();renderPathbar();}
   $("csvReplace").addEventListener("click",function(){importCSV(true);});$("csvAppend").addEventListener("click",function(){importCSV(false);});
-  function catalogPrompt(){return "I'm preparing my course catalog for a skills-matching tool. From the catalog content I'll paste below, make a CSV with exactly three columns and a header row: code,title,description.\n\nRules:\n- One row per course.\n- Keep each official course code and title.\n- Description: 2 to 4 plain sentences on what learners actually do and learn. Name specific tools, software, equipment, tasks and topics. Leave out credit hours, prerequisites and scheduling details.\n- Wrap any field that contains a comma in double quotes.\n- Output only the CSV, with no commentary.\n\nCatalog content:\n[paste your catalog pages here]";}
+  function catalogPrompt(){return "I'm preparing my course catalog for a skills-matching tool. From the catalog content I'll paste below, make a CSV with exactly three columns and a header row: code,title,description.\n\nRules:\n- One row per course.\n- Keep each official course code and title.\n- Description: 2 to 4 plain sentences on what learners actually do and learn. Name specific tools, software, equipment, tasks and topics. Leave out credit hours, prerequisites and scheduling details.\n- Wrap any field that contains a comma in double quotes.\n- Output only the CSV, with no commentary.\n\nMy catalog: I\'ve attached the PDF, pasted a link, or pasted the catalog text below this line.\n";}
   function copyText(text,el,ok){try{navigator.clipboard.writeText(text).then(function(){el.className="status-line ok";el.textContent=ok;},function(){el.className="status-line";el.textContent="Select the text and copy it with your keyboard.";});}catch(e){el.textContent="Select the text and copy it with your keyboard.";}}
   $("copyCatalogPrompt").addEventListener("click",function(){copyText(catalogPrompt(),$("catMsg"),"Prompt copied.");});
 
