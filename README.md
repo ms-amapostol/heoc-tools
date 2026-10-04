@@ -7,8 +7,14 @@ Free planning tools for universities, community colleges, K-12, EdTech companies
 | [AI Readiness Check](https://ms-amapostol.github.io/heoc-tools/ai-readiness-check/) | Eighteen questions across six areas, tailored to your organization and role. Get a readiness score and three moves for the next 90 days. |
 | [Automation Opportunity Finder](https://ms-amapostol.github.io/heoc-tools/automation-opportunity-finder/) | List the repetitive work that fills your team's week. See the hours at stake, the quick wins, and a practical way to automate each task. |
 | [AI Use Guidelines Builder](https://ms-amapostol.github.io/heoc-tools/ai-use-guidelines-builder/) | Make a few choices and get a one-page AI use guideline with a red-yellow-green data guide, ready to paste into Word or Google Docs. |
-| [Program-to-Jobs Mapper](https://ms-amapostol.github.io/heoc-tools/program-to-jobs-mapper/) | Map what your program teaches to the jobs your learners want. See job fit, the gaps to close first, and a full skills matrix. |
+| [Program-to-Jobs Mapper](https://ms-amapostol.github.io/heoc-tools/program-to-jobs-mapper/) | Match course descriptions to 900+ real occupations, or start from target jobs and find the courses that build them. Cited to O*NET 31.0 and BLS. |
 
 Each tool is a single HTML file. Nothing a user enters leaves their browser. Sample data is fictional. Colors follow the viewer's time of day; add `#morning`, `#day`, `#afternoon`, `#evening` or `#night` to a link to preview a look.
 
 These tools give general planning guidance only. They are not legal, compliance, privacy, financial or professional advice.
+
+## Data sources (Program-to-Jobs Mapper)
+
+- O*NET 31.0 Database (August 2026), U.S. Department of Labor, Employment and Training Administration. This tool includes information from the O*NET 31.0 Database by USDOL/ETA, used under the CC BY 4.0 license. O*NET® is a trademark of USDOL/ETA. Higher Ed Ops Consulting has modified all or some of this information. USDOL/ETA has not approved, endorsed, or tested these modifications.
+- BLS Occupational Employment and Wage Statistics, May 2025 national estimates.
+- BLS Employment Projections, Education and training assignments by detailed occupation (Table 5.4), 2025.
