@@ -402,7 +402,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
 <div class="wrap work" id="workView" hidden>
   <div class="context">
     <div class="ctx-chips" id="ctxChips"></div>
-    <button class="btn link" type="button" id="changePath">Change path or organization</button>
+    <div class="row-actions"><button class="btn link" type="button" id="changePath">Change path or organization</button><button class="btn link" type="button" id="openSample">View the sample</button><button class="btn ghost small" type="button" id="startOver">Start over</button><button type="button" class="tip" aria-label="What does this do?" data-tip="Clears everything on this page, including your courses and target jobs, and takes you back to the first screen. Your data only lives in this browser, so this can't be undone.">?</button></div>
   </div>
   <div class="banner sample-banner" id="banner" hidden>
     <div id="sampleText" style="display:grid;gap:6px;min-width:0;flex:1 1 420px"></div>
@@ -751,7 +751,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     {code:"WRK 100",title:"Workplace Readiness",desc:"Professional communication, teamwork, time management and problem solving. Includes mock interviews, resume writing and a capstone presentation to employer partners."},
     {code:"ITS 190",title:"CompTIA A+ Exam Prep",desc:"Review and practice exams for the CompTIA A+ certification, covering mobile devices, hardware, networking, virtualization, operating systems, security and operational procedures."}];
   var SAMPLE_TARGETS=["15-1232.00","15-1231.00","15-1244.00"];
-  var KEY="heoc-program-jobs-v3";
+  var KEY="heoc-program-jobs-v4";
   var state={view:"intake",mode:null};
   try{var sv=JSON.parse(localStorage.getItem(KEY)||"null");if(sv&&sv.mode==="mine"&&sv.type&&sv.path)state=sv;}catch(e){}
   function save(){try{if(state.mode==="mine")localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
@@ -803,13 +803,19 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     if(state.mode==="mine"){$("orgName").value=state.org||"";document.querySelectorAll('input[name="orgType"]').forEach(function(r){r.checked=r.value===state.type;});var p=$("p-"+state.path);if(p)p.checked=true;}
     show("intake");
   });
+  var overTimer=null;
+  function resetAll(){try{localStorage.removeItem(KEY);}catch(e){}state={view:"intake",mode:null};document.querySelectorAll('#intakeView input[type=radio]').forEach(function(r){r.checked=false;});$("orgName").value="";$("agree").checked=false;show("intake");}
+  $("startOver").addEventListener("click",function(){var b=$("startOver");
+    if(b.getAttribute("data-armed")){clearTimeout(overTimer);b.removeAttribute("data-armed");b.textContent="Start over";resetAll();return;}
+    b.setAttribute("data-armed","1");b.textContent="Click again to clear everything";overTimer=setTimeout(function(){b.removeAttribute("data-armed");b.textContent="Start over";},5000);});
+  $("openSample").addEventListener("click",function(){wizPath="compare";wizSample=true;var pc=$("p-compare");if(pc)pc.checked=true;renderFlow();show("intake");wiz(2);});
   $("startOwn").addEventListener("click",function(){state={view:"intake",mode:null};document.querySelectorAll('#intakeView input[type=radio]').forEach(function(r){r.checked=false;});$("orgName").value="";show("intake");});
 
   /* ===== Workspace & path bar ===== */
   function steps(){return PATHS[state.path].steps;}
   function buildWork(){
     var o=ORGS[state.type];
-    $("banner").hidden=state.mode!=="sample";
+    $("banner").hidden=state.mode!=="sample"; $("openSample").hidden=state.mode==="sample";
     $("ctxChips").innerHTML=(state.org?'<span class="pill">'+esc(state.org)+'</span>':'')+'<span class="pill">'+o.label+'</span><span class="pill">'+PATHS[state.path].label+'</span>';
     $("addTitle").textContent="Add your "+o.item+"s";
     $("catalogPrompt").value=catalogPrompt();
@@ -858,7 +864,7 @@ table.mx{border-collapse:collapse;font-size:13.5px;min-width:560px;width:100%}
     }).join("");
   }
   $("courses").addEventListener("input",function(e){var t=e.target,f=t.getAttribute("data-f");if(!f)return;var i=+t.closest(".course").getAttribute("data-i");state.courses[i][f]=t.value;state.an[i]=null;touch();});
-  $("courses").addEventListener("change",function(){renderCourses();recompute();renderPathbar();});
+  $("courses").addEventListener("change",function(){setTimeout(function(){if(!$("pane-add").hidden){var f=document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#courses")?document.activeElement:null;var fi=f?[+f.closest(".course").getAttribute("data-i"),f.getAttribute("data-f")]:null;renderCourses();if(fi){var el=document.querySelector('#courses .course[data-i="'+fi[0]+'"] [data-f="'+fi[1]+'"]');if(el)el.focus();}}recompute();renderPathbar();},0);});
   $("courses").addEventListener("click",function(e){var d=e.target.getAttribute("data-del");if(d===null)return;d=+d;state.courses.splice(d,1);state.an.splice(d,1);state.ed.splice(d,1);touch();renderCourses();recompute();renderPathbar();});
   $("addCourse").addEventListener("click",function(){state.courses.push({code:"",title:"",desc:""});touch();renderCourses();var a=document.querySelectorAll('#courses input.title');a[a.length-1].focus();});
   function parseCSV(text){var rows=[],row=[],f="",q=false;for(var i=0;i<text.length;i++){var ch=text[i];if(q){if(ch=='"'){if(text[i+1]=='"'){f+='"';i++;}else q=false;}else f+=ch;}else if(ch=='"')q=true;else if(ch==','||ch=='\t'){row.push(f);f="";}else if(ch=='\n'){row.push(f);rows.push(row);row=[];f="";}else if(ch!='\r')f+=ch;}
