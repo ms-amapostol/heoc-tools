@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Automation Opportunity Finder</title>
-<meta name="description" content="Find the repetitive tasks worth automating first at your school, college, EdTech company or nonprofit.">
+<title>AI Use Guidelines Builder</title>
+<meta name="description" content="Build a one-page AI use guideline for your school, college, EdTech company or nonprofit in about 15 minutes.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap">
@@ -16,7 +16,7 @@
 })();
 </script>
 <style>
-/* Layout: intake first; then a task list on the left and a sticky results panel (totals, impact-vs-ease chart, where to start) on the right; stacks on phones. */
+/* Layout: intake first; then builder controls on the left and a live, paper-style guideline preview on the right (sticky); stacks on phones. */
 /* Time-of-day palettes. A script sets data-phase on <html> from the viewer's local clock:
    morning 5–11am · day 11am–2pm · afternoon 2–5pm · evening 5–9pm · night 9pm–5am.
    Bare :root holds the daytime palette so the page reads correctly before the script runs. */
@@ -75,6 +75,7 @@
 }
 :root[data-phase="evening"]{--paper:#F7F8FB;--paper-line:#D7DCE6}
 body{transition:background-color .6s ease,color .6s ease}
+
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -136,76 +137,73 @@ input,select{font:15px var(--body);padding:9px 10px;border-radius:8px;border:1px
 .gets svg{width:28px;height:28px}
 .mini{border-top:1px solid var(--line);padding-top:14px;font-size:14px;color:var(--muted);margin:0}
 
-/* Workspace */
-.main{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:28px;align-items:start;padding-block:24px 64px}
-@media (max-width:1020px){.main{grid-template-columns:minmax(0,1fr)}}
+/* Shared workspace pieces */
 .context{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;margin-bottom:16px}
 .ctx-chips{display:flex;flex-wrap:wrap;gap:8px}
 .pill{font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
 .banner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;background:var(--soft);border:1px dashed var(--accent);border-radius:12px;padding:14px 16px;font-size:15px;margin-bottom:16px}
 .intro{margin:0 0 14px;color:var(--muted);font-size:15px}
-.tasks{display:grid;gap:14px}
-.task{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;gap:12px}
-.task-top{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:10px;align-items:center}
-.num{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:800 14px var(--display);background:var(--soft);color:var(--accent)}
-.task-top input{font-weight:600;font-size:16px}
-.x{background:none;border:0;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;padding:4px 8px;border-radius:6px}
-.x:hover{color:var(--warn)}
-.task-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-.task-grid label{grid-column:span 2}.task-grid .wide{grid-column:span 3}
-.task-grid label{display:grid;gap:4px;font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--muted);min-width:0}
-@media (max-width:720px){.task-grid{grid-template-columns:1fr 1fr}.task-grid label{grid-column:auto}.task-grid .wide,.task-grid label:last-child{grid-column:1 / -1}}
-.task-out{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
-.task-out b{color:var(--ink);font-variant-numeric:tabular-nums}
-.tag{font:700 12px/1 var(--body);padding:6px 10px;border-radius:999px;white-space:nowrap}
-.tag.win{background:var(--q-win-bg);color:var(--q-win)} .tag.bet{background:var(--q-bet-bg);color:var(--q-bet)}
-.tag.fill{background:var(--q-fill-bg);color:var(--q-fill)} .tag.later{background:var(--q-later-bg);color:var(--q-later)}
-.tag.flag{background:var(--flag-bg);color:var(--flag)}
-.adders{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
-.adders select{max-width:320px}
-.settings{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;gap:12px}
-.settings h3{font-size:16px;font-weight:800}
-.settings .row{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.settings label{display:grid;gap:4px;font-size:13px;font-weight:700;color:var(--muted)}
-.settings p{margin:0;font-size:13.5px;color:var(--muted)}
-
-/* Results */
-.results{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);max-height:calc(100vh - 40px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;display:grid;gap:22px}
-@media (max-width:1020px){.results{position:static;max-height:none;overflow:visible}}
 .r-label{margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.tot{background:var(--soft);border-radius:12px;padding:12px}
-.tot b{display:block;font:800 24px/1.1 var(--display);font-variant-numeric:tabular-nums}
-.tot span{font-size:12.5px;color:var(--muted)}
-.chart svg{width:100%;height:auto;display:block}
-.chart text{font-family:var(--body)}
-.keys{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin-top:6px}
-.keys span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:-1px;background:var(--c)}
-.start{margin:0;padding:0;list-style:none;display:grid;gap:16px}
-.start li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px}
-.start .num{background:var(--accent);color:var(--btn-ink)}
-.s-title{font-weight:700}
-.s-meta{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}
-.s-body{margin:0;font-size:14.5px;color:var(--muted)}
-.s-flag{margin:6px 0 0;font-size:13.5px;color:var(--flag)}
 .offer{background:var(--offer);color:var(--offer-ink);border-radius:14px;padding:20px;display:grid;gap:10px}
 .offer .r-label{color:var(--offer-muted);margin:0}
 .offer h3{font-size:19px;font-weight:800}
 .offer p{margin:0;font-size:14.5px;color:var(--offer-muted)}
 .offer a.more{color:var(--offer-ink);font-weight:700;font-size:14.5px}
-.r-actions{display:grid;gap:10px}
-.r-actions .btn{width:100%}
+.offer .btn{background:var(--offer-ink);color:var(--offer);border-color:var(--offer-ink)}
 .toast{font-size:13px;color:var(--accent);min-height:18px;margin:0;text-align:center}
 .copybox{width:100%;min-height:120px;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--bg);color:var(--ink)}
 .how{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px;font-size:15px;color:var(--muted)}
 .how summary{cursor:pointer;font-weight:700;color:var(--ink)}
 .how ul{margin:10px 0 4px;padding-left:20px;display:grid;gap:4px}
-
 footer.foot{border-top:1px solid var(--line);background:var(--surface)}
 footer.foot .wrap{padding-block:26px;display:grid;gap:12px;font-size:13.5px;color:var(--muted)}
 footer.foot .row{display:flex;flex-wrap:wrap;gap:10px 28px;justify-content:space-between}
 footer.foot .legal{margin:0;max-width:880px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+
+.main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:28px;align-items:start;padding-block:24px 64px}
+@media (max-width:1020px){.main{grid-template-columns:minmax(0,1fr)}}
+.steps{display:grid;gap:16px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:grid;gap:12px;min-width:0}
+.step h2{font-size:18px;font-weight:800}
+.step .help{margin:-6px 0 0;font-size:14px;color:var(--muted)}
+.checks{display:grid;gap:8px}
+.check{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;align-items:start;font-size:15px}
+.check input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--accent)}
+textarea{font:15px/1.5 var(--body);padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%;min-height:84px;resize:vertical}
+.radios{display:grid;gap:8px}
+.lights{display:grid;gap:8px}
+.light{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;font-size:14.5px;padding:8px 0;border-top:1px solid var(--line)}
+.light:first-child{border-top:0}
+.tri{display:inline-grid;grid-template-columns:repeat(3,auto);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.tri input{position:absolute;opacity:0;pointer-events:none;width:auto}
+.tri label{font-size:12.5px;font-weight:700;padding:7px 10px;cursor:pointer;color:var(--muted);border-left:1px solid var(--line)}
+.tri label:first-of-type{border-left:0}
+.tri input:checked + label.g{background:var(--g);color:#fff}
+.tri input:checked + label.y{background:var(--y);color:#fff}
+.tri input:checked + label.r{background:var(--r);color:#fff}
+.tri input:focus-visible + label{outline:3px solid var(--aqua);outline-offset:-3px}
+@media (max-width:560px){.light{grid-template-columns:minmax(0,1fr)}.tri{width:100%;grid-template-columns:repeat(3,1fr)}.tri label{text-align:center}}
+.two{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.two label{display:grid;gap:4px;font-size:13px;font-weight:700;color:var(--muted)}
+
+.preview-col{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);max-height:calc(100vh - 40px);overflow:auto;display:grid;gap:16px;padding-bottom:4px}
+@media (max-width:1020px){.preview-col{position:static;max-height:none;overflow:visible}}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.bar .btns{display:flex;flex-wrap:wrap;gap:8px}
+.paper{background:var(--paper);color:var(--paper-ink);border:1px solid var(--paper-line);border-radius:6px;box-shadow:0 10px 30px rgba(10,30,40,.12);padding:clamp(22px,4vw,44px);font-size:14.5px;line-height:1.55}
+.paper h1{font:800 24px/1.2 var(--display);margin:0 0 4px;color:var(--paper-ink)}
+.paper .meta{margin:0 0 18px;font-size:12.5px;color:var(--paper-muted);padding-bottom:14px;border-bottom:2px solid var(--paper-ink)}
+.paper h3{font:800 14px/1.3 var(--display);text-transform:uppercase;letter-spacing:.06em;margin:18px 0 6px;color:var(--paper-ink)}
+.paper p{margin:0 0 8px}
+.paper ul{margin:0 0 8px;padding-left:20px}
+.paper li{margin:2px 0}
+.paper table{width:100%;border-collapse:collapse;font-size:13.5px;margin:4px 0 8px}
+.paper td{vertical-align:top;padding:8px 10px;border:1px solid var(--paper-line)}
+.paper td.t{width:24%;font-weight:800}
+.paper td.t.g{background:var(--g-bg);color:var(--g)} .paper td.t.y{background:var(--y-bg);color:var(--y)} .paper td.t.r{background:var(--r-bg);color:var(--r)}
+.paper .sig{margin-top:18px;padding-top:12px;border-top:1px solid var(--paper-line);font-size:12.5px;color:var(--paper-muted)}
 </style>
 </head>
 <body>
@@ -223,12 +221,12 @@ footer.foot .legal{margin:0;max-width:880px}
 
 <section class="hero">
   <div class="wrap">
-    <p class="eyebrow">Free planning tool</p>
-    <h1>Which tasks should you automate first?</h1>
-    <p class="lede">List the repetitive work that eats your team's week. You'll see the hours at stake, which tasks are quick wins, and a practical way to automate each one.</p>
+    <p class="eyebrow">Free template builder</p>
+    <h1>Write your AI use guideline in one sitting.</h1>
+    <p class="lede">Make a few choices and watch a one-page guideline take shape: approved tools, a red-yellow-green data guide, good uses, off-limits uses and who to ask. Copy it into Word or Google Docs when you're done.</p>
     <ul class="facts">
-      <li>About 10 minutes</li>
-      <li>Starts with common tasks for your type of organization</li>
+      <li>About 15 minutes</li>
+      <li>Tailored to your type of organization</li>
       <li>Your answers stay in your browser</li>
     </ul>
   </div>
@@ -239,11 +237,11 @@ footer.foot .legal{margin:0;max-width:880px}
   <form class="card form" id="intakeForm" novalidate>
     <div>
       <h2>Start with your organization</h2>
-      <p class="sub">We'll load common tasks for your type of organization with typical numbers. You can edit, remove or add your own.</p>
+      <p class="sub">We'll fill in sensible defaults for your type of organization. You can change every line.</p>
     </div>
     <div class="field">
-      <label for="orgName">Institution or team name <span class="hint">(optional)</span></label>
-      <input id="orgName" type="text" autocomplete="organization" placeholder="e.g. Student Success Center">
+      <label for="orgName">Organization or department name</label>
+      <input id="orgName" type="text" autocomplete="organization" placeholder="e.g. Riverside School District">
     </div>
     <fieldset class="field">
       <legend>What type of organization are you with?</legend>
@@ -251,26 +249,26 @@ footer.foot .legal{margin:0;max-width:880px}
     </fieldset>
     <label class="consent" for="agree">
       <input type="checkbox" id="agree">
-      <span><strong>I understand this is a planning tool.</strong> Estimates are general guidance for planning purposes only. They are not legal, compliance, privacy, financial or professional advice. Higher Ed Ops Consulting LLC is not liable for any decisions made or actions taken based on these results.</span>
+      <span><strong>I understand this is a starting template.</strong> The guideline it produces is general guidance for planning purposes only. It is not legal, compliance or privacy advice, and it should be reviewed by your legal, compliance and IT teams before you adopt it. Higher Ed Ops Consulting LLC is not liable for any decisions made or actions taken based on it.</span>
     </label>
     <p class="err" id="intakeErr" role="alert"></p>
     <div class="start-row">
-      <button class="btn" type="submit">Find my opportunities</button>
-      <button class="btn ghost" type="button" id="trySample">Try the Lakeview Community College sample</button>
+      <button class="btn" type="submit">Build my guideline</button>
+      <button class="btn ghost" type="button" id="trySample">See the Lakeview Community College sample</button>
     </div>
   </form>
   <aside class="card gets">
     <h3>What you'll get</h3>
     <ul>
-      <li><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11" fill="none" stroke="var(--accent)" stroke-width="3"></circle><path d="M14 8v6l4 3" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"></path></svg><span><b>Hours you could win back</b>Per task and in total, with a full-time equivalent and dollar value.</span></li>
-      <li><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M4 4v20h20" fill="none" stroke="var(--muted)" stroke-width="2"></path><circle cx="19" cy="9" r="3.5" fill="var(--q-win)"></circle><circle cx="10" cy="12" r="3" fill="var(--q-bet)"></circle><circle cx="17" cy="19" r="2.5" fill="var(--q-fill)"></circle></svg><span><b>An impact-versus-ease map</b>Quick wins, big bets and tasks to leave for later.</span></li>
-      <li><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M6 14l5 5 11-11" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg><span><b>Where to start</b>Your top three candidates, each with a suggested approach and a privacy check.</span></li>
+      <li><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="6" y="3" width="16" height="22" rx="2" fill="none" stroke="var(--accent)" stroke-width="2.5"></rect><path d="M10 10h8M10 14h8M10 18h5" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"></path></svg><span><b>A one-page guideline</b>Plain language your staff will actually read.</span></li>
+      <li><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="8" cy="14" r="4" fill="var(--g)"></circle><circle cx="14" cy="14" r="4" fill="var(--y)"></circle><circle cx="20" cy="14" r="4" fill="var(--r)"></circle></svg><span><b>A data traffic light</b>What's fine, what needs an approved tool, and what never goes in.</span></li>
+      <li><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="4" y="6" width="14" height="16" rx="2" fill="none" stroke="var(--accent)" stroke-width="2.5"></rect><rect x="10" y="3" width="14" height="16" rx="2" fill="var(--surface)" stroke="var(--aqua)" stroke-width="2.5"></rect></svg><span><b>Ready to paste</b>Copy formatted text into Word or Google Docs, or plain text into an email.</span></li>
     </ul>
-    <p class="mini">The Lakeview sample shows a finished analysis for a fictional community college's student success team.</p>
+    <p class="mini">The Lakeview sample shows a finished guideline for a fictional community college.</p>
   </aside>
 </div>
 
-<!-- STEP 2: WORKSPACE -->
+<!-- STEP 2: BUILDER -->
 <div class="wrap main" id="workView" hidden>
   <div>
     <div class="context">
@@ -281,57 +279,64 @@ footer.foot .legal{margin:0;max-width:880px}
       <span><strong>You're viewing a sample</strong> for Lakeview Community College, a fictional school.</span>
       <button class="btn" id="startOwn" type="button">Start my own</button>
     </div>
-    <p class="intro" id="intro"></p>
-    <div class="tasks" id="tasks"></div>
-    <div class="adders">
-      <button class="btn ghost small" type="button" id="addBlank">+ Add your own task</button>
-      <select id="addCommon" aria-label="Add a common task"></select>
+    <div class="steps" id="steps">
+      <section class="step">
+        <h2>Who it covers</h2>
+        <div class="checks" id="covers"></div>
+      </section>
+      <section class="step">
+        <h2>Approved AI tools</h2>
+        <p class="help">One per line. Replace these with the tools your IT team has approved.</p>
+        <textarea id="tools" aria-label="Approved AI tools"></textarea>
+        <div class="radios" id="otherTools"></div>
+      </section>
+      <section class="step">
+        <h2>Data traffic light</h2>
+        <p class="help">Green is fine in any approved tool. Yellow needs an approved tool and a work sign-in. Red never goes into an AI tool.</p>
+        <div class="lights" id="lights"></div>
+      </section>
+      <section class="step">
+        <h2>Good uses</h2>
+        <div class="checks" id="good"></div>
+      </section>
+      <section class="step">
+        <h2>Off-limits uses</h2>
+        <div class="checks" id="off"></div>
+      </section>
+      <section class="step">
+        <h2>Review and disclosure</h2>
+        <div class="radios" id="disclose"></div>
+      </section>
+      <section class="step">
+        <h2>Questions, new tools and updates</h2>
+        <div class="two">
+          <label for="contact">Who to ask<input id="contact" type="text"></label>
+          <label for="cadence">Review this guideline<select id="cadence"><option value="term">Every term</option><option value="six">Every six months</option><option value="year">Every year</option></select></label>
+          <label for="effective">Effective date<input id="effective" type="date"></label>
+        </div>
+      </section>
     </div>
-    <div class="settings">
-      <h3>Assumptions</h3>
-      <div class="row">
-        <label for="rate">Loaded hourly staff cost ($)<input id="rate" type="number" min="0" step="1"></label>
-        <label for="weeks">Working weeks per year<input id="weeks" type="number" min="1" max="52" step="1"></label>
-      </div>
-      <p>Loaded cost means salary plus benefits, divided by hours worked. Ask your budget office for your number.</p>
-    </div>
-    <details class="how">
-      <summary>How the estimates work</summary>
-      <ul>
-        <li><b>Hours per year</b> = times per week × minutes each × working weeks ÷ 60.</li>
-        <li><b>Hours you could save</b> depends on how predictable the steps are: same steps every time 80%, mostly the same 50%, needs judgment 25%.</li>
-        <li><b>Ease</b> (0–100) starts from how predictable the steps are, then drops for sensitive data and adjusts for the type of task. Reminders and scheduling are usually easiest; document review is hardest.</li>
-        <li><b>Quick win:</b> 100+ hours saved and ease 55+. <b>Big bet:</b> 100+ hours, harder to do. <b>Fill-in:</b> easy, smaller payoff. <b>Later:</b> harder and smaller.</li>
-        <li>Full-time equivalent uses 2,080 hours per year.</li>
-      </ul>
-    </details>
   </div>
 
-  <aside class="results" id="results" aria-live="polite">
-    <div>
-      <p class="r-label" id="rFor">Your opportunity</p>
-      <div class="totals">
-        <div class="tot"><b id="tHours">–</b><span>hours a year you could win back</span></div>
-        <div class="tot"><b id="tFte">–</b><span>full-time equivalent</span></div>
-        <div class="tot"><b id="tDollars">–</b><span>in staff time</span></div>
+  <div class="preview-col">
+    <div class="bar">
+      <p class="r-label" style="margin:0">Live preview</p>
+      <div class="btns">
+        <button class="btn small" type="button" id="copyRich">Copy for Word or Google Docs</button>
+        <button class="btn ghost small" type="button" id="copyPlain">Copy plain text</button>
       </div>
     </div>
-    <div class="chart">
-      <p class="r-label">Impact versus ease</p>
-      <svg id="chart" viewBox="0 0 380 270" role="img" aria-labelledby="cTitle"><title id="cTitle">Tasks plotted by hours saved per year and ease of automation</title></svg>
-      <div class="keys"><span style="--c:var(--q-win)">Quick win</span><span style="--c:var(--q-bet)">Big bet</span><span style="--c:var(--q-fill)">Fill-in</span><span style="--c:var(--q-later)">Later</span></div>
+    <p class="toast" id="toast" role="status"></p>
+    <textarea class="copybox" id="copyBox" readonly hidden aria-label="Guideline text to copy"></textarea>
+    <article class="paper" id="paper" aria-label="Guideline preview"></article>
+    <div class="offer">
+      <p class="r-label">If you'd like a hand</p>
+      <h3>AI Enablement Workshop</h3>
+      <p>A guideline sticks when people practice with it. In a hands-on session, your team works through real tasks inside these guardrails, learns a four-step prompting method, and leaves with an adoption plan.</p>
+      <a class="more" href="https://higheredopsconsulting.com/services/#train">See how it works →</a>
+      <a class="btn" href="https://calendly.com/ms-amapostol/30min">Book a free 30-minute call</a>
     </div>
-    <div>
-      <p class="r-label">Where to start</p>
-      <ol class="start" id="start"></ol>
-    </div>
-    <div id="offerSlot"></div>
-    <div class="r-actions">
-      <button class="btn ghost" id="copyBtn" type="button">Copy my summary</button>
-      <textarea class="copybox" id="copyBox" readonly hidden aria-label="Summary text to copy"></textarea>
-      <p class="toast" id="toast" role="status"></p>
-    </div>
-  </aside>
+  </div>
 </div>
 
 <footer class="foot">
@@ -340,7 +345,7 @@ footer.foot .legal{margin:0;max-width:880px}
       <span>Built by <a href="https://higheredopsconsulting.com">Higher Ed Ops Consulting</a>. Sample data is fictional.</span>
       <span>No sign-up. Nothing you enter leaves this page. Colors shift with your time of day.</span>
     </div>
-    <p class="legal"><strong>Disclaimer:</strong> This tool provides general estimates for planning purposes only. It is not legal, compliance, privacy, financial or professional advice, and it does not create a consulting relationship. Higher Ed Ops Consulting LLC is not liable for any decisions made or actions taken based on its results. Review any automation that touches protected data with your legal, compliance and IT teams.</p>
+    <p class="legal"><strong>Disclaimer:</strong> This builder produces a general starting template for planning purposes only. It is not legal, compliance or privacy advice, and it does not create a consulting relationship. Have your legal, compliance and IT teams review any guideline before adoption. Higher Ed Ops Consulting LLC is not liable for any decisions made or actions taken based on its output.</p>
   </div>
 </footer>
 
@@ -349,70 +354,76 @@ footer.foot .legal{margin:0;max-width:880px}
   function $(id){return document.getElementById(id);}
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 
-  var TYPES = {
-    questions:{label:"Answering repeat questions", ease:-5,
-      how:"Draft replies with AI from an approved FAQ, with a person reviewing before anything is sent. For status questions, a self-service lookup can answer most of them outright."},
-    data:{label:"Moving data between systems", ease:0,
-      how:"A scheduled script (Google Apps Script or Power Automate) copies fields from one system's export into the other and logs any errors for a person to fix."},
-    reports:{label:"Building recurring reports", ease:5,
-      how:"Build the report once on a live data source so it refreshes itself, then schedule it to land in inboxes automatically."},
-    reminders:{label:"Sending reminders and follow-ups", ease:10,
-      how:"Rules-based messages triggered by a date or a missing item, sent from your CRM or a simple spreadsheet script, with replies routed to a shared inbox."},
-    documents:{label:"Reviewing documents", ease:-10,
-      how:"AI pre-screens each document against a checklist and flags what's missing. A person still makes every decision."},
-    scheduling:{label:"Scheduling", ease:5,
-      how:"Self-service booking links tied to staff calendars, with automatic confirmations and reminders."}
+  var ORGS={
+    univ:{label:"University",note:"Degree-granting, public or private",staff:"staff and faculty",people:"students",privacy:"FERPA",
+      covers:["Staff","Faculty","Student workers","Contractors and vendors"],
+      red:"Student records: grades, transcripts, financial aid, disability or health information",
+      decide:"Making admissions, financial aid, grading or discipline decisions"},
+    cc:{label:"Community college",note:"Credit, noncredit and workforce",staff:"staff and faculty",people:"students",privacy:"FERPA",
+      covers:["Staff","Faculty","Student workers","Contractors and vendors"],
+      red:"Student records: grades, transcripts, financial aid, disability or health information",
+      decide:"Making admissions, financial aid, grading or discipline decisions"},
+    k12:{label:"K-12 district or school",note:"Public, charter or independent",staff:"teachers and staff",people:"students and families",privacy:"FERPA, COPPA and state student-privacy laws",
+      covers:["Teachers","Staff and administrators","Substitutes and volunteers","Contractors and vendors"],
+      red:"Student records: grades, IEP and 504 plans, discipline, health and family information",
+      decide:"Making grading, placement, IEP or discipline decisions"},
+    edtech:{label:"EdTech company",note:"Products or services for education",staff:"employees",people:"customers and learners",privacy:"customer contracts, data processing agreements and privacy law",
+      covers:["Employees","Contractors","Interns"],
+      red:"Customer and learner data covered by contracts or data processing agreements",
+      decide:"Making hiring, performance or customer eligibility decisions"},
+    nonprofit:{label:"Nonprofit",note:"Education, workforce or youth-serving",staff:"staff and volunteers",people:"participants",privacy:"privacy law and funder data requirements",
+      covers:["Staff","Volunteers","Board members","Contractors"],
+      red:"Participant case notes, health, immigration or eligibility information",
+      decide:"Making eligibility, case or funding decisions about participants"}
   };
-  var STEPS = {same:{label:"Same steps every time",share:.8,ease:90}, mostly:{label:"Mostly the same",share:.5,ease:60}, judgment:{label:"Needs judgment",share:.25,ease:30}};
-  var DATA = {none:{label:"No personal data",pen:0}, personal:{label:"Names, emails, contact info",pen:15}, protected:{label:"Protected records",pen:25}};
+  function dataItems(o){return [
+    ["Public information: website content, published catalogs and calendars","g"],
+    ["Your own writing that contains no personal details","g"],
+    ["Internal documents, procedures and meeting notes","y"],
+    ["Aggregate or de-identified data with no names or ID numbers","y"],
+    ["Names, emails and phone numbers","y"],
+    [o.red,"r"],
+    ["Social Security numbers, passwords and payment information","r"],
+    ["HR and personnel information","r"]
+  ];}
+  var GOOD=["Drafting and editing emails, letters and announcements","Summarizing long documents and meeting notes","Brainstorming ideas, outlines and event plans","Creating first drafts of reports, FAQs and training materials","Writing spreadsheet formulas and simple scripts","Translating communications, with a fluent reviewer before sending","Making content more accessible: plain language, alt text and captions"];
+  function offList(o){return [o.decide,"Entering anything from the red list","Sending AI output without a person reviewing it","Recording or transcribing meetings without telling participants","Creating images, audio or video of real people","Using personal AI accounts for work tasks"];}
+  var OTHER={ask:"Ask before using any other AI tool for work.",no:"Other AI tools may not be used for work."};
+  var DISC={
+    outside:"Disclose AI help on anything that goes outside your office, such as messages to {people} or the public.",
+    most:"Disclose AI help when AI wrote most of a document.",
+    own:"No disclosure is required. You own every word you send."};
+  var CAD={term:"every term",six:"every six months",year:"every year"};
+  var LIGHT={g:"Green",y:"Yellow",r:"Red"};
 
-  // [name, type, times/week, minutes, steps, data]
-  var HE = [
-    ["Answering repeat questions in the student services inbox","questions",60,5,"same","protected"],
-    ["Re-keying paper and PDF forms into the student system","data",35,6,"same","personal"],
-    ["Weekly early-alert and retention report","reports",1,180,"mostly","protected"],
-    ["Check-in reminders for students flagged by early alerts","reminders",50,4,"same","personal"],
-    ["Reviewing academic petitions and appeals","documents",25,20,"judgment","protected"],
-    ["Scheduling success coaching appointments by email","scheduling",40,7,"mostly","personal"]
-  ];
-  var ORGS = {
-    univ:{label:"University", note:"Degree-granting, public or private", privacy:"FERPA", tasks:HE},
-    cc:{label:"Community college", note:"Credit, noncredit and workforce", privacy:"FERPA", tasks:HE},
-    k12:{label:"K-12 district or school", note:"Public, charter or independent", privacy:"FERPA, COPPA and your state's student-privacy laws", tasks:[
-      ["Answering enrollment questions from families","questions",40,6,"mostly","personal"],
-      ["Attendance follow-up calls and messages","reminders",60,4,"same","protected"],
-      ["Copying assessment scores into tracking sheets","data",10,30,"same","protected"],
-      ["Monthly report for the principal or board","reports",0.25,480,"mostly","protected"],
-      ["Checking permission and registration forms","documents",30,5,"mostly","protected"],
-      ["Scheduling parent-teacher conferences","scheduling",30,6,"mostly","personal"]]},
-    edtech:{label:"EdTech company", note:"Products or services for education", privacy:"your PII obligations and customer data agreements", tasks:[
-      ["Answering repeat support tickets","questions",120,6,"mostly","personal"],
-      ["Copying deal details from CRM to onboarding tracker","data",15,15,"same","personal"],
-      ["Weekly customer health report","reports",1,240,"mostly","personal"],
-      ["Renewal and low-usage reminder emails","reminders",30,8,"same","personal"],
-      ["Completing security questionnaires and RFPs","documents",2,240,"judgment","none"],
-      ["Scheduling onboarding and training calls","scheduling",15,10,"mostly","personal"]]},
-    nonprofit:{label:"Nonprofit", note:"Education, workforce or youth-serving", privacy:"your PII obligations and funder data requirements", tasks:[
-      ["Answering program eligibility questions","questions",30,8,"mostly","personal"],
-      ["Entering intake forms into the case system","data",25,10,"same","protected"],
-      ["Monthly grant report data pulls","reports",0.25,480,"mostly","personal"],
-      ["Volunteer shift reminders","reminders",20,5,"same","personal"],
-      ["Reviewing participant applications","documents",15,20,"judgment","protected"],
-      ["Scheduling participant check-ins","scheduling",20,8,"mostly","personal"]]}
-  };
+  function defaults(type,org,sample){
+    var o=ORGS[type];
+    return {view:"work",mode:sample?"sample":"mine",org:org,type:type,
+      covers:o.covers.slice(0, type==="edtech"?2:4),
+      tools: sample ? "Microsoft Copilot Chat, signed in with your Lakeview account\nGoogle Gemini, through Lakeview's Google Workspace\nZoom AI Companion, for meetings you host"
+                    : "Microsoft Copilot Chat, signed in with your work account\nGoogle Gemini, through your work Google Workspace account",
+      other:"ask",
+      lights:dataItems(o).map(function(d){return d[1];}),
+      good:GOOD.slice(),
+      off:offList(o).slice(),
+      disclose:"outside",
+      contact: sample ? "the IT Help Desk at helpdesk@lakeviewcc.example" : "your supervisor or the IT help desk",
+      cadence: sample ? "term" : "six",
+      effective:(function(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");})()};
+  }
 
-  function row(t){return {name:t[0],type:t[1],per:t[2],min:t[3],steps:t[4],data:t[5]};}
-  var KEY="heoc-automation-finder-v1";
-  var state={view:"intake",mode:null,org:"",type:null,rate:38,weeks:48,tasks:[]};
+  var KEY="heoc-ai-guidelines-v1";
+  var state={view:"intake",mode:null};
   try{var s=JSON.parse(localStorage.getItem(KEY)||"null"); if(s&&s.mode==="mine"&&s.type)state=s;}catch(e){}
   function save(){try{if(state.mode==="mine")localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+  function touch(){if(state.mode==="sample"){state.mode="mine";$("banner").hidden=true;} save(); renderPaper();}
 
-  /* ---------- Intake ---------- */
+  /* Intake */
   $("orgTiles").innerHTML=Object.keys(ORGS).map(function(k){
     return '<div class="tile"><input type="radio" name="orgType" id="orgType-'+k+'" value="'+k+'"><label for="orgType-'+k+'"><b>'+ORGS[k].label+'</b><span>'+ORGS[k].note+'</span></label></div>';
   }).join("");
   function fillIntake(){
-    $("orgName").value=state.mode==="mine"?state.org:"";
+    $("orgName").value=state.mode==="mine"?(state.org||""):"";
     document.querySelectorAll('input[name="orgType"]').forEach(function(r){r.checked=state.mode==="mine"&&r.value===state.type;});
   }
   $("intakeForm").addEventListener("submit",function(e){
@@ -422,183 +433,150 @@ footer.foot .legal{margin:0;max-width:880px}
     if(!$("agree").checked)miss.push("check the acknowledgment");
     if(miss.length){$("intakeErr").textContent="To start, please "+miss.join(" and ")+".";return;}
     $("intakeErr").textContent="";
-    var keep = state.mode==="mine" && state.type===t.value && state.tasks.length;
-    state={view:"work",mode:"mine",org:$("orgName").value.trim(),type:t.value,
-      rate:state.mode==="mine"?state.rate:38, weeks:state.mode==="mine"?state.weeks:48,
-      tasks: keep ? state.tasks : ORGS[t.value].tasks.map(row)};
+    var name=$("orgName").value.trim()||"Our organization";
+    if(state.mode==="mine"&&state.type===t.value){state.org=name;state.view="work";}
+    else state=defaults(t.value,name,false);
     show("work");
   });
   $("trySample").addEventListener("click",function(){
     if(!$("agree").checked){$("intakeErr").textContent="Please check the acknowledgment to open the sample.";$("agree").focus();return;}
     $("intakeErr").textContent="";
-    state={view:"work",mode:"sample",org:"Lakeview Community College",type:"cc",rate:38,weeks:48,tasks:ORGS.cc.tasks.map(row)};
-    show("work");
+    state=defaults("cc","Lakeview Community College",true); show("work");
   });
   $("editIntake").addEventListener("click",function(){fillIntake();show("intake");});
-  $("startOwn").addEventListener("click",function(){state={view:"intake",mode:null,org:"",type:null,rate:38,weeks:48,tasks:[]};fillIntake();show("intake");$("orgName").focus();});
-
+  $("startOwn").addEventListener("click",function(){state={view:"intake",mode:null};fillIntake();show("intake");$("orgName").focus();});
   function show(v){
     state.view=v; save();
     $("intakeView").hidden=v!=="intake"; $("workView").hidden=v!=="work";
-    if(v==="work"){buildWork();}
+    if(v==="work")buildWork();
     window.scrollTo(0,document.querySelector(v==="work"?"#workView":"#intakeView").offsetTop-10);
   }
 
-  /* ---------- Math ---------- */
-  function calc(t){
-    var per=Math.max(0,+t.per||0), min=Math.max(0,+t.min||0), weeks=Math.max(1,+state.weeks||48);
-    var hours=per*min*weeks/60, st=STEPS[t.steps]||STEPS.mostly, dt=DATA[t.data]||DATA.personal, ty=TYPES[t.type]||TYPES.questions;
-    var saved=hours*st.share, ease=Math.max(5,Math.min(100,st.ease-dt.pen+ty.ease));
-    var big=saved>=100, easy=ease>=55;
-    var q=big&&easy?"win":big?"bet":easy?"fill":"later";
-    return {hours:hours,saved:saved,ease:ease,q:q};
+  /* Builder */
+  function checks(el,name,items,selected){
+    el.innerHTML=items.map(function(it,i){
+      return '<label class="check" for="'+name+i+'"><input type="checkbox" id="'+name+i+'" data-list="'+name+'" value="'+esc(it)+'"'+(selected.indexOf(it)>-1?" checked":"")+'><span>'+esc(it)+'</span></label>';
+    }).join("");
   }
-  var QNAME={win:"Quick win",bet:"Big bet",fill:"Fill-in",later:"Later"};
-  var QORDER={win:0,bet:1,fill:2,later:3};
-  function fmt(n){return Math.round(n).toLocaleString("en-US");}
-
-  /* ---------- Workspace ---------- */
+  function radios(el,name,map,sel,o){
+    el.innerHTML=Object.keys(map).map(function(k){
+      return '<label class="check" for="'+name+'-'+k+'"><input type="radio" name="'+name+'" id="'+name+'-'+k+'" value="'+k+'"'+(k===sel?" checked":"")+'><span>'+esc(map[k].replace("{people}",o.people))+'</span></label>';
+    }).join("");
+  }
   function buildWork(){
     var o=ORGS[state.type];
     $("banner").hidden=state.mode!=="sample";
-    $("ctxChips").innerHTML=(state.org?'<span class="pill">'+esc(state.org)+'</span>':'')+'<span class="pill">'+o.label+'</span>';
-    $("intro").textContent = state.mode==="sample"
-      ? "Lakeview's student success team listed six tasks that fill their week. Change any number to see the results update."
-      : "We've started you with common tasks for a "+o.label.toLowerCase()+" and typical numbers. Edit them to match your team, remove what doesn't apply, and add your own.";
-    $("rate").value=state.rate; $("weeks").value=state.weeks;
-    $("addCommon").innerHTML='<option value="">+ Add a common task…</option>'+o.tasks.map(function(t,i){return '<option value="'+i+'">'+esc(t[0])+'</option>';}).join("");
-    renderTasks(); renderResults();
+    $("ctxChips").innerHTML='<span class="pill">'+esc(state.org)+'</span><span class="pill">'+o.label+'</span>';
+    checks($("covers"),"covers",o.covers,state.covers);
+    $("tools").value=state.tools;
+    radios($("otherTools"),"other",OTHER,state.other,o);
+    $("lights").innerHTML=dataItems(o).map(function(d,i){
+      var v=state.lights[i]||d[1];
+      return '<div class="light"><span>'+esc(d[0])+'</span><span class="tri" role="radiogroup" aria-label="'+esc(d[0])+'">'+
+        ["g","y","r"].map(function(k){return '<input type="radio" name="light'+i+'" id="light'+i+k+'" value="'+k+'"'+(v===k?" checked":"")+'><label class="'+k+'" for="light'+i+k+'">'+LIGHT[k]+'</label>';}).join("")+
+        '</span></div>';
+    }).join("");
+    checks($("good"),"good",GOOD,state.good);
+    checks($("off"),"off",offList(o),state.off);
+    radios($("disclose"),"disclose",DISC,state.disclose,o);
+    $("contact").value=state.contact; $("cadence").value=state.cadence; $("effective").value=state.effective;
+    renderPaper();
   }
-  function opts(map,sel){return Object.keys(map).map(function(k){return '<option value="'+k+'"'+(k===sel?" selected":"")+'>'+map[k].label+'</option>';}).join("");}
-  function renderTasks(){
-    $("tasks").innerHTML=state.tasks.map(function(t,i){
-      return '<div class="task" data-i="'+i+'">'+
-        '<div class="task-top"><span class="num">'+(i+1)+'</span><input aria-label="Task name" data-f="name" value="'+esc(t.name)+'" placeholder="Describe the task"><button class="x" type="button" data-del="'+i+'" aria-label="Remove task">×</button></div>'+
-        '<div class="task-grid">'+
-          '<label class="wide">Type of task<select data-f="type">'+opts(TYPES,t.type)+'</select></label>'+
-          '<label class="wide">Data involved<select data-f="data">'+opts(DATA,t.data)+'</select></label>'+
-          '<label>Times per week<input type="number" min="0" step="any" data-f="per" value="'+t.per+'"></label>'+
-          '<label>Minutes each<input type="number" min="0" step="any" data-f="min" value="'+t.min+'"></label>'+
-          '<label>How predictable?<select data-f="steps">'+opts(STEPS,t.steps)+'</select></label>'+
-        '</div>'+
-        '<div class="task-out" id="out-'+i+'"></div></div>';
-    }).join("") || '<p class="intro">No tasks yet. Add one below.</p>';
-    state.tasks.forEach(function(t,i){renderOut(i);});
-  }
-  function renderOut(i){
-    var t=state.tasks[i], c=calc(t), el=$("out-"+i); if(!el)return;
-    el.innerHTML='<span><b>'+fmt(c.hours)+'</b> hrs/yr today</span><span><b>'+fmt(c.saved)+'</b> hrs/yr you could save</span><span>Ease <b>'+Math.round(c.ease)+'</b></span><span class="tag '+c.q+'">'+QNAME[c.q]+'</span>'+(t.data==="protected"?'<span class="tag flag">Privacy review</span>':'');
-  }
-  $("tasks").addEventListener("input",function(e){
-    var f=e.target.getAttribute("data-f"); if(!f)return;
-    var i=+e.target.closest(".task").getAttribute("data-i");
-    state.tasks[i][f]= (f==="per"||f==="min") ? e.target.value : e.target.value;
-    if(state.mode==="sample"){state.mode="mine";$("banner").hidden=true;}
-    save(); renderOut(i); renderResults();
+  $("steps").addEventListener("change",function(e){
+    var t=e.target, o=ORGS[state.type];
+    var list=t.getAttribute("data-list");
+    if(list){
+      var src= list==="covers"?o.covers : list==="good"?GOOD : offList(o);
+      state[list]=src.filter(function(x,i){return $(list+i).checked;});
+    } else if(t.name&&t.name.indexOf("light")===0){
+      state.lights[+t.name.slice(5)]=t.value;
+    } else if(t.name==="other"){state.other=t.value;}
+    else if(t.name==="disclose"){state.disclose=t.value;}
+    else if(t.id==="cadence"){state.cadence=t.value;}
+    else if(t.id==="effective"){state.effective=t.value;}
+    touch();
   });
-  $("tasks").addEventListener("click",function(e){
-    var d=e.target.getAttribute("data-del"); if(d===null)return;
-    state.tasks.splice(+d,1); if(state.mode==="sample"){state.mode="mine";$("banner").hidden=true;}
-    save(); renderTasks(); renderResults();
+  ["tools","contact"].forEach(function(id){$(id).addEventListener("input",function(e){state[id]=e.target.value;touch();});});
+
+  function fmtDate(iso){
+    if(!iso)return "";
+    var d=new Date(iso+"T12:00:00"); if(isNaN(d))return iso;
+    return d.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  }
+  function joinList(a){return a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1];}
+
+  /* The guideline itself, as structured blocks so HTML and plain text stay in sync */
+  function doc(){
+    var o=ORGS[state.type], items=dataItems(o), B=[];
+    var tools=state.tools.split("\n").map(function(x){return x.trim();}).filter(Boolean);
+    var tier={g:[],y:[],r:[]};
+    items.forEach(function(d,i){tier[state.lights[i]||d[1]].push(d[0]);});
+    B.push({h1:state.org+" AI Use Guideline"});
+    B.push({meta:"Effective "+fmtDate(state.effective)+" · Reviewed "+CAD[state.cadence]+" · Questions: "+state.contact});
+    B.push({h3:"Why we have this guideline"});
+    B.push({p:"AI tools can save time on writing, summarizing and planning, which frees us to spend more of our day with "+o.people+". This guideline explains how to use them well while protecting the people we serve and following "+o.privacy+"."});
+    if(state.covers.length){B.push({h3:"Who it covers"});B.push({p:"This guideline applies to "+joinList(state.covers.map(function(c){return c.toLowerCase();}))+" whenever AI is used for "+state.org+" work."});}
+    B.push({h3:"Approved tools"});
+    B.push({ul:tools.length?tools:["No tools listed yet."]});
+    B.push({p:OTHER[state.other].replace("Ask before","Ask "+state.contact+" before")});
+    B.push({h3:"What data can go into an AI tool"});
+    B.push({table:[
+      ["g","Green: OK in any approved tool",tier.g],
+      ["y","Yellow: approved tools only, signed in with your work account. Remove names where you can.",tier.y],
+      ["r","Red: never enter into any AI tool",tier.r]]});
+    if(state.good.length){B.push({h3:"Good ways to use AI"});B.push({ul:state.good});}
+    if(state.off.length){B.push({h3:"Off-limits"});B.push({ul:state.off});}
+    B.push({h3:"Review and disclosure"});
+    B.push({ul:["You are responsible for anything you send or publish, AI-assisted or not. Check facts, names, numbers and tone before it goes out.",
+      DISC[state.disclose].replace("{people}",o.people),
+      "AI can sound confident and still be wrong. When accuracy matters, verify against the original source."]});
+    B.push({h3:"Questions and new tools"});
+    B.push({p:"Before trying a new AI tool with work data, or if you're unsure where something falls, contact "+state.contact+". We'll review this guideline "+CAD[state.cadence]+" as tools and laws change."});
+    B.push({sig:"Template created with the free AI Use Guidelines Builder from Higher Ed Ops Consulting (higheredopsconsulting.com). Review with your legal, compliance and IT teams before adoption."});
+    return B;
+  }
+  function toHTML(B,inline){
+    var S=inline?{h1:'style="font-family:Arial,sans-serif;font-size:20pt;margin:0 0 4pt"',h3:'style="font-family:Arial,sans-serif;font-size:11pt;text-transform:uppercase;margin:14pt 0 4pt"',
+      td:'style="border:1px solid #ccc;padding:6pt;vertical-align:top"',tbl:'style="border-collapse:collapse;width:100%"'}:{h1:"",h3:"",td:"",tbl:""};
+    return B.map(function(b){
+      if(b.h1)return '<h1 '+S.h1+'>'+esc(b.h1)+'</h1>';
+      if(b.meta)return '<p class="meta">'+esc(b.meta)+'</p>';
+      if(b.h3)return '<h3 '+S.h3+'>'+esc(b.h3)+'</h3>';
+      if(b.p)return '<p>'+esc(b.p)+'</p>';
+      if(b.ul)return '<ul>'+b.ul.map(function(x){return '<li>'+esc(x)+'</li>';}).join("")+'</ul>';
+      if(b.table)return '<table '+S.tbl+'>'+b.table.map(function(r){
+        return '<tr><td class="t '+r[0]+'" '+S.td+'><b>'+esc(r[1].split(":")[0])+'</b>'+(inline?'':'')+'<br><span style="font-weight:400">'+esc(r[1].split(":").slice(1).join(":").trim())+'</span></td><td '+S.td+'>'+(r[2].length?r[2].map(esc).join("<br>"):"—")+'</td></tr>';
+      }).join("")+'</table>';
+      if(b.sig)return '<p class="sig">'+esc(b.sig)+'</p>';
+      return "";
+    }).join("");
+  }
+  function toText(B){
+    return B.map(function(b){
+      if(b.h1)return b.h1.toUpperCase();
+      if(b.meta)return b.meta+"\n";
+      if(b.h3)return "\n"+b.h3.toUpperCase();
+      if(b.p)return b.p;
+      if(b.ul)return b.ul.map(function(x){return "• "+x;}).join("\n");
+      if(b.table)return b.table.map(function(r){return r[1]+"\n"+(r[2].length?r[2].map(function(x){return "  – "+x;}).join("\n"):"  – none");}).join("\n");
+      if(b.sig)return "\n"+b.sig;
+      return "";
+    }).join("\n");
+  }
+  function renderPaper(){$("paper").innerHTML=toHTML(doc(),false);$("copyBox").hidden=true;}
+
+  var toast=$("toast");
+  function fallback(text){var box=$("copyBox");box.value=text;box.hidden=false;box.focus();box.select();toast.textContent="Select all and copy the text below.";}
+  $("copyPlain").addEventListener("click",function(){
+    var text=toText(doc());
+    try{navigator.clipboard.writeText(text).then(function(){toast.textContent="Plain text copied.";},function(){fallback(text);});}catch(e){fallback(text);}
   });
-  $("addBlank").addEventListener("click",function(){
-    state.tasks.push({name:"",type:"questions",per:10,min:5,steps:"mostly",data:"personal"});
-    if(state.mode==="sample"){state.mode="mine";$("banner").hidden=true;}
-    save(); renderTasks(); renderResults();
-    var inputs=document.querySelectorAll('.task input[data-f="name"]'); inputs[inputs.length-1].focus();
-  });
-  $("addCommon").addEventListener("change",function(e){
-    if(e.target.value==="")return;
-    state.tasks.push(row(ORGS[state.type].tasks[+e.target.value])); e.target.value="";
-    if(state.mode==="sample"){state.mode="mine";$("banner").hidden=true;}
-    save(); renderTasks(); renderResults();
-  });
-  ["rate","weeks"].forEach(function(id){$(id).addEventListener("input",function(e){
-    state[id]=e.target.value; if(state.mode==="sample"){state.mode="mine";$("banner").hidden=true;}
-    save(); state.tasks.forEach(function(t,i){renderOut(i);}); renderResults();
-  });});
-
-  function ranked(){
-    return state.tasks.map(function(t,i){return {t:t,i:i,c:calc(t)};})
-      .sort(function(a,b){return QORDER[a.c.q]-QORDER[b.c.q] || b.c.saved-a.c.saved;});
-  }
-
-  function renderResults(){
-    var o=ORGS[state.type], all=ranked();
-    var saved=all.reduce(function(s,x){return s+x.c.saved;},0), rate=Math.max(0,+state.rate||0);
-    $("rFor").textContent= state.org ? "Opportunity for "+state.org : "Your opportunity";
-    $("tHours").textContent=fmt(saved);
-    $("tFte").textContent=(saved/2080).toFixed(2);
-    $("tDollars").textContent="$"+fmt(saved*rate);
-    drawChart(all);
-    var top=all.filter(function(x){return x.c.saved>0;}).slice(0,3);
-    $("start").innerHTML = top.length ? top.map(function(x){
-      var name=x.t.name||"Untitled task";
-      return '<li><span class="num">'+(x.i+1)+'</span><div><div class="s-title">'+esc(name)+'</div>'+
-        '<div class="s-meta"><span class="tag '+x.c.q+'">'+QNAME[x.c.q]+'</span><span class="tag later">'+fmt(x.c.saved)+' hrs/yr</span></div>'+
-        '<p class="s-body">'+TYPES[x.t.type].how+'</p>'+
-        (x.t.data==="protected"?'<p class="s-flag">Involves protected records. Keep it inside approved systems and review it with IT and compliance under '+o.privacy+' before any AI tool touches it.</p>':'')+
-        '</div></li>';
-    }).join("") : '<li><span class="num">–</span><div><div class="s-title">Add a task to see where to start</div></div></li>';
-    var slot=$("offerSlot");
-    if(top.length){
-      var first=top[0];
-      slot.innerHTML='<div class="offer"><p class="r-label">If you'+"'"+'d like a hand</p><h3>Workflow Automation Sprint</h3>'+
-        '<p>We map "'+esc(first.t.name||"your top task")+'" step by step, automate the repetitive parts in tools you already own, and measure the hours saved. Your team keeps the documentation and the before-and-after numbers.</p>'+
-        '<a class="more" href="https://higheredopsconsulting.com/services/#automate">See how it works →</a>'+
-        '<a class="btn" style="background:var(--offer-ink);color:var(--offer);border-color:var(--offer-ink)" href="https://calendly.com/ms-amapostol/30min">Book a free 30-minute call</a></div>';
-    } else slot.innerHTML="";
-    $("copyBox").hidden=true;
-  }
-
-  function niceMax(v){var steps=[100,150,200,250,300,400,500,750,1000,1500,2000,3000,5000,10000];for(var i=0;i<steps.length;i++)if(v<=steps[i])return steps[i];return Math.ceil(v/5000)*5000;}
-  function drawChart(all){
-    var W=380,H=270,L=46,R=12,T=14,B=40, pw=W-L-R, ph=H-T-B;
-    var maxS=niceMax(Math.max(150,Math.max.apply(null,all.map(function(x){return x.c.saved;}).concat([0]))*1.1));
-    function X(e){return L+e/100*pw;} function Y(s){return T+ph-s/maxS*ph;}
-    var g='';
-    // quadrant shading for quick wins
-    g+='<rect x="'+X(55)+'" y="'+T+'" width="'+(X(100)-X(55))+'" height="'+(Y(100)-T)+'" fill="var(--q-win-bg)" opacity=".7"></rect>';
-    // y grid + labels
-    var stepY=maxS/5;
-    for(var k=0;k<=5;k++){var v=k*stepY,y=Y(v);
-      g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"></line>';
-      g+='<text x="'+(L-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="10.5" fill="var(--muted)">'+fmt(v)+'</text>';}
-    // threshold lines
-    g+='<line x1="'+X(55)+'" x2="'+X(55)+'" y1="'+T+'" y2="'+(T+ph)+'" stroke="var(--muted)" stroke-dasharray="4 4" stroke-width="1"></line>';
-    g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(100)+'" y2="'+Y(100)+'" stroke="var(--muted)" stroke-dasharray="4 4" stroke-width="1"></line>';
-    // x ticks
-    [0,25,50,75,100].forEach(function(e){g+='<text x="'+X(e)+'" y="'+(T+ph+15)+'" text-anchor="middle" font-size="10.5" fill="var(--muted)">'+e+'</text>';});
-    g+='<text x="'+(L+pw/2)+'" y="'+(H-6)+'" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--muted)">Ease of automating →</text>';
-    g+='<text transform="translate(12 '+(T+ph/2)+') rotate(-90)" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--muted)">Hours saved per year</text>';
-    // quadrant labels
-    g+='<text x="'+(W-R-6)+'" y="'+(T+14)+'" text-anchor="end" font-size="10.5" font-weight="700" fill="var(--q-win)">QUICK WINS</text>';
-    g+='<text x="'+(L+6)+'" y="'+(T+14)+'" font-size="10.5" font-weight="700" fill="var(--q-bet)">BIG BETS</text>';
-    // dots (draw larger saved first so smaller sit on top)
-    var COL={win:"var(--q-win)",bet:"var(--q-bet)",fill:"var(--q-fill)",later:"var(--q-later)"};
-    all.slice().sort(function(a,b){return b.c.saved-a.c.saved;}).forEach(function(x){
-      var cx=X(x.c.ease), cy=Y(Math.min(x.c.saved,maxS));
-      g+='<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="11" fill="'+COL[x.c.q]+'" stroke="var(--surface)" stroke-width="2"><title>'+esc(x.t.name||"Untitled task")+': '+fmt(x.c.saved)+' hrs/yr, ease '+Math.round(x.c.ease)+'</title></circle>';
-      g+='<text x="'+cx.toFixed(1)+'" y="'+(cy+4).toFixed(1)+'" text-anchor="middle" font-size="11" font-weight="800" fill="var(--surface)">'+(x.i+1)+'</text>';
-    });
-    $("chart").innerHTML='<title id="cTitle">Tasks plotted by hours saved per year and ease of automation</title>'+g;
-  }
-
-  function summary(){
-    var o=ORGS[state.type], all=ranked(), saved=all.reduce(function(s,x){return s+x.c.saved;},0), L=[];
-    L.push("Automation Opportunity Finder"+(state.org?" — "+state.org:"")+" ("+o.label+")");
-    L.push("Hours you could win back: "+fmt(saved)+"/year · "+(saved/2080).toFixed(2)+" FTE · $"+fmt(saved*(+state.rate||0))+" in staff time");
-    L.push("");
-    all.forEach(function(x){L.push("#"+(x.i+1)+" "+(x.t.name||"Untitled task")+" — "+QNAME[x.c.q]+", "+fmt(x.c.saved)+" hrs/yr saved, ease "+Math.round(x.c.ease)+(x.t.data==="protected"?" (privacy review)":""));});
-    L.push(""); L.push("Assumptions: $"+state.rate+"/hour loaded cost, "+state.weeks+" working weeks, 2,080 hours per FTE.");
-    L.push("General planning estimates only; not legal, compliance, financial or professional advice.");
-    L.push("Made with the free Automation Opportunity Finder from Higher Ed Ops Consulting · higheredopsconsulting.com");
-    return L.join("\n");
-  }
-  $("copyBtn").addEventListener("click",function(){
-    var text=summary(), box=$("copyBox"), toast=$("toast");
-    function fallback(){box.value=text;box.hidden=false;box.focus();box.select();toast.textContent="Select all and copy the text above.";}
-    try{navigator.clipboard.writeText(text).then(function(){toast.textContent="Summary copied. Paste it into an email or doc.";box.hidden=true;},fallback);}catch(e){fallback();}
+  $("copyRich").addEventListener("click",function(){
+    var B=doc(), html=toHTML(B,true), text=toText(B);
+    try{
+      var item=new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([text],{type:"text/plain"})});
+      navigator.clipboard.write([item]).then(function(){toast.textContent="Copied with formatting. Paste into Word or Google Docs.";},function(){fallback(text);});
+    }catch(e){fallback(text);}
   });
 
   fillIntake();

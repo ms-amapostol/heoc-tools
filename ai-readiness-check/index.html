@@ -8,34 +8,74 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap">
+<script>(function(){
+  var P=["morning","day","afternoon","evening","night"];
+  function phaseFor(h){if(h>=5&&h<11)return "morning";if(h>=11&&h<14)return "day";if(h>=14&&h<17)return "afternoon";if(h>=17&&h<21)return "evening";return "night";}
+  function apply(){var t=(location.hash||"").slice(1);document.documentElement.setAttribute("data-phase",P.indexOf(t)>-1?t:phaseFor(new Date().getHours()));}
+  apply(); setInterval(apply,60000); window.addEventListener("hashchange",apply);
+})();
+</script>
 <style>
 /* Layout: intake screen first (form + what-you-get), then assessment column with a sticky results panel; stacks on phones with a slim score bar pinned to the bottom. */
+/* Time-of-day palettes. A script sets data-phase on <html> from the viewer's local clock:
+   morning 5–11am · day 11am–2pm · afternoon 2–5pm · evening 5–9pm · night 9pm–5am.
+   Bare :root holds the daytime palette so the page reads correctly before the script runs. */
 :root{
-  --bg:#F4F8F9; --surface:#FFFFFF; --soft:#EEF4F6; --ink:#15202B; --muted:#4A5866; --line:#DCE3E8;
-  --accent:#0B5E78; --aqua:#8FD3E8; --btn:#0B5E78; --btn-ink:#FFFFFF; --warn:#A33A2B;
-  --seg-on:#0B5E78; --seg-on-ink:#FFFFFF; --hero:#15202B; --hero-ink:#FFFFFF; --hero-muted:#C9D3DB;
+  --bg:#F4F8F9; --surface:#FFFFFF; --soft:#EAF3F6; --ink:#15202B; --muted:#4A5866; --line:#DCE3E8;
+  --accent:#0B5E78; --aqua:#3FA9C9; --btn:#0B5E78; --btn-ink:#FFFFFF; --warn:#A33A2B;
+  --seg-on:#0B5E78; --seg-on-ink:#FFFFFF;
+  --hero:linear-gradient(135deg,#D9EFF6 0%,#EEF8FB 55%,#F8FCFD 100%); --hero-ink:#15202B; --hero-muted:#3A4753; --eyebrow:#0B5E78;
   --offer:#0B5E78; --offer-ink:#FFFFFF; --offer-muted:#D3E9F0;
   --s1:#C2621A; --s1-bg:#FBEBDD; --s2:#9A7A0A; --s2-bg:#F7EFCF; --s3:#0B7A8F; --s3-bg:#DDF1F5; --s4:#1F7A4D; --s4-bg:#DCF1E5;
+  --q-win:#1F7A4D; --q-win-bg:#DCF1E5; --q-bet:#0B7A8F; --q-bet-bg:#DDF1F5; --q-fill:#9A7A0A; --q-fill-bg:#F7EFCF; --q-later:#6B7785; --q-later-bg:#E9EDF0;
+  --flag:#A33A2B; --flag-bg:#FBE7E3;
+  --g:#1F7A4D; --g-bg:#E3F4EA; --y:#8A6D00; --y-bg:#FBF1CC; --r:#A33A2B; --r-bg:#FBE7E3;
+  --paper:#FFFFFF; --paper-ink:#15202B; --paper-muted:#4A5866; --paper-line:#DCE3E8;
   --logo-light:block; --logo-dark:none;
   --display:'Manrope','Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
   --body:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0D151B; --surface:#15202B; --soft:#1B2935; --ink:#EAF1F4; --muted:#A9B8C3; --line:#2A3A47;
-  --accent:#8FD3E8; --aqua:#8FD3E8; --btn:#8FD3E8; --btn-ink:#08283A; --warn:#F2958A;
-  --seg-on:#8FD3E8; --seg-on-ink:#08283A; --hero:#0A2F3D; --hero-ink:#FFFFFF; --hero-muted:#B8CBD4;
-  --offer:#0A3A4B; --offer-ink:#FFFFFF; --offer-muted:#B8D8E3;
-  --s1:#F0A060; --s1-bg:#3A2616; --s2:#E3C55A; --s2-bg:#352D12; --s3:#7FD0E0; --s3-bg:#123540; --s4:#7FD6A5; --s4-bg:#143325;
-  --logo-light:none; --logo-dark:block; color-scheme:dark;
-}}
-:root[data-theme="dark"]{
-  --bg:#0D151B; --surface:#15202B; --soft:#1B2935; --ink:#EAF1F4; --muted:#A9B8C3; --line:#2A3A47;
-  --accent:#8FD3E8; --aqua:#8FD3E8; --btn:#8FD3E8; --btn-ink:#08283A; --warn:#F2958A;
-  --seg-on:#8FD3E8; --seg-on-ink:#08283A; --hero:#0A2F3D; --hero-ink:#FFFFFF; --hero-muted:#B8CBD4;
-  --offer:#0A3A4B; --offer-ink:#FFFFFF; --offer-muted:#B8D8E3;
-  --s1:#F0A060; --s1-bg:#3A2616; --s2:#E3C55A; --s2-bg:#352D12; --s3:#7FD0E0; --s3-bg:#123540; --s4:#7FD6A5; --s4-bg:#143325;
+/* Morning: bright, with a hint of sunrise */
+:root[data-phase="morning"]{
+  --bg:#F7F9F7; --soft:#EDF5F3; --line:#DFE6E3;
+  --hero:linear-gradient(135deg,#DDF1F5 0%,#F1F8F4 50%,#FFF3E2 100%);
+}
+/* Afternoon: soft pink */
+:root[data-phase="afternoon"]{
+  --bg:#FBF4F4; --surface:#FFFFFF; --soft:#F8E8EB; --ink:#2A1E24; --muted:#5E4A52; --line:#EDDADE;
+  --hero:linear-gradient(135deg,#F7D6DF 0%,#FBE6E3 55%,#FDF1E7 100%); --hero-ink:#2A1E24; --hero-muted:#5E4A52; --eyebrow:#A2405F;
+  --offer:#7E3552; --offer-ink:#FFFFFF; --offer-muted:#F5D5E0;
+  --s3-bg:#E2F1F4; --q-later-bg:#EFE7E9;
+}
+/* Evening: dusk */
+:root[data-phase="evening"]{
+  --bg:#1C2535; --surface:#253148; --soft:#2E3C56; --ink:#EEF2F7; --muted:#B8C3D3; --line:#3A4A64;
+  --accent:#9AD7EA; --aqua:#9AD7EA; --btn:#9AD7EA; --btn-ink:#10283A; --warn:#F2958A;
+  --seg-on:#9AD7EA; --seg-on-ink:#10283A;
+  --hero:linear-gradient(135deg,#3E3463 0%,#2B3C63 50%,#1E3B52 100%); --hero-ink:#FFFFFF; --hero-muted:#D3D9E8; --eyebrow:#F4B9C6;
+  --offer:#3E3463; --offer-ink:#FFFFFF; --offer-muted:#D9D2EE;
+  --s1:#F0A060; --s1-bg:#43301F; --s2:#E3C55A; --s2-bg:#3E3519; --s3:#7FD0E0; --s3-bg:#1D4050; --s4:#7FD6A5; --s4-bg:#1D3E30;
+  --q-win:#7FD6A5; --q-win-bg:#1D3E30; --q-bet:#7FD0E0; --q-bet-bg:#1D4050; --q-fill:#E3C55A; --q-fill-bg:#3E3519; --q-later:#B8C3D3; --q-later-bg:#34425A;
+  --flag:#F2958A; --flag-bg:#4A2A2A;
   --logo-light:none; --logo-dark:block; color-scheme:dark;
 }
+/* Night: darkest */
+:root[data-phase="night"]{
+  --bg:#060B10; --surface:#0E171F; --soft:#15212C; --ink:#E4EBF0; --muted:#97A7B3; --line:#1F2E3A;
+  --accent:#8FD3E8; --aqua:#8FD3E8; --btn:#8FD3E8; --btn-ink:#08283A; --warn:#F2958A;
+  --seg-on:#8FD3E8; --seg-on-ink:#08283A;
+  --hero:linear-gradient(135deg,#04080C 0%,#08141D 60%,#0B1E2A 100%); --hero-ink:#FFFFFF; --hero-muted:#AEBDC8; --eyebrow:#8FD3E8;
+  --offer:#0A3242; --offer-ink:#FFFFFF; --offer-muted:#B8D8E3;
+  --s1:#F0A060; --s1-bg:#33220F; --s2:#E3C55A; --s2-bg:#2F2810; --s3:#7FD0E0; --s3-bg:#0F2F3A; --s4:#7FD6A5; --s4-bg:#112D20;
+  --q-win:#7FD6A5; --q-win-bg:#112D20; --q-bet:#7FD0E0; --q-bet-bg:#0F2F3A; --q-fill:#E3C55A; --q-fill-bg:#2F2810; --q-later:#97A7B3; --q-later-bg:#1C2833;
+  --flag:#F2958A; --flag-bg:#351B18;
+  --paper:#F4F7F8; --paper-line:#D5DDE2;
+  --logo-light:none; --logo-dark:block; color-scheme:dark;
+}
+:root[data-phase="evening"]{--paper:#F7F8FB;--paper-line:#D7DCE6}
+body{transition:background-color .6s ease,color .6s ease}
+
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
@@ -59,11 +99,11 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 /* Hero */
 .hero{background:var(--hero);color:var(--hero-ink)}
 .hero .wrap{padding-block:40px 36px;display:grid;gap:12px}
-.eyebrow{margin:0;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua)}
+.eyebrow{margin:0;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--eyebrow)}
 .hero h1{font-size:clamp(30px,5vw,46px);font-weight:800;line-height:1.1;letter-spacing:-.02em;max-width:760px}
 .hero p.lede{margin:0;color:var(--hero-muted);font-size:18px;max-width:660px}
 .facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin:4px 0 0;padding:0;list-style:none;font-size:14px;color:var(--hero-muted)}
-.facts li::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--aqua);margin-right:8px;vertical-align:middle}
+.facts li::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--eyebrow);margin-right:8px;vertical-align:middle}
 
 /* Intake */
 .intake{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start;padding-block:28px 64px}
@@ -223,7 +263,7 @@ footer.foot .legal{margin:0;max-width:880px}
 
     <div class="field">
       <label for="orgName">Institution or team name <span class="hint">(optional)</span></label>
-      <input id="orgName" type="text" autocomplete="organization" placeholder="e.g. Office of Online Learning">
+      <input id="orgName" type="text" autocomplete="organization" placeholder="e.g. Enrollment Services">
     </div>
 
     <fieldset class="field">
@@ -340,7 +380,7 @@ footer.foot .legal{margin:0;max-width:880px}
   <div class="wrap">
     <div class="row">
       <span>Built by <a href="https://higheredopsconsulting.com">Higher Ed Ops Consulting</a>. Sample data is fictional.</span>
-      <span>No sign-up. Nothing you enter leaves this page.</span>
+      <span>No sign-up. Nothing you enter leaves this page. Colors shift with your time of day.</span>
     </div>
     <p class="legal"><strong>Disclaimer:</strong> This assessment provides general information for educational and planning purposes only. It is not legal, compliance, privacy or professional advice, and it does not create a consulting relationship. Higher Ed Ops Consulting LLC is not liable for any decisions made or actions taken based on its results. Review any AI tool that touches protected data with your legal, compliance and IT teams.</p>
   </div>
@@ -355,13 +395,13 @@ footer.foot .legal{margin:0;max-width:880px}
     univ:{label:"University", note:"Public or private, two- or four-year degree granting", org:"university",
       people:"students", staff:"staff and faculty", leaders:"Cabinet and senior leaders",
       privacy:"FERPA", privData:"student records", privEx:"student records, SSNs, health information",
-      systems:"SIS, CRM, LMS", defs:"enrolled, retained and completed", process:"admissions, advising, registration",
-      offices:"admissions, advising and institutional research", meeting:"cabinet meeting"},
+      systems:"SIS, CRM, LMS", defs:"enrolled, retained and completed", process:"advising, registration, student support",
+      offices:"advising, the registrar and institutional research", meeting:"cabinet meeting"},
     cc:{label:"Community college", note:"Credit, noncredit and workforce programs", org:"college",
       people:"students", staff:"staff and faculty", leaders:"The president and cabinet",
       privacy:"FERPA", privData:"student records", privEx:"student records, SSNs, financial aid and health information",
-      systems:"SIS, CRM, LMS", defs:"enrolled, retained and completed", process:"admissions, advising, registration",
-      offices:"admissions, advising and institutional research", meeting:"cabinet meeting"},
+      systems:"SIS, CRM, LMS", defs:"enrolled, retained and completed", process:"advising, registration, student support",
+      offices:"advising, the registrar and institutional research", meeting:"cabinet meeting"},
     k12:{label:"K-12 district or school", note:"Public, charter or independent", org:"district",
       people:"students and families", staff:"teachers and staff", leaders:"District and school leaders",
       privacy:"FERPA, COPPA and your state's student-privacy laws", privData:"student records", privEx:"student records, IEP and 504 details, family contact information",
